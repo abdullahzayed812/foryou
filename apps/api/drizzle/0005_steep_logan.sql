@@ -1,0 +1,2 @@
+DROP INDEX "offers_request_seller_unique";--> statement-breakpoint
+CREATE UNIQUE INDEX "offers_request_seller_active_unique" ON "offers" USING btree ("import_request_id","seller_id") WHERE "offers"."status" = 'active';

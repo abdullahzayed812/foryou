@@ -1,0 +1,866 @@
+{
+  "common": {
+    "appName": "FOR YOU",
+    "loading": "Loading…",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "logout": "Log out",
+    "back": "Back",
+    "egp": "EGP",
+    "yes": "Yes",
+    "no": "No",
+    "remove": "Remove",
+    "selectOne": "Select one",
+    "close": "Close"
+  },
+  "roles": {
+    "customer": "Customer",
+    "seller": "Seller",
+    "merchant": "Merchant",
+    "admin": "Administrator"
+  },
+  "countries": {
+    "china": "China",
+    "turkey": "Turkey",
+    "usa": "USA",
+    "uk": "United Kingdom",
+    "germany": "Germany",
+    "france": "France",
+    "italy": "Italy",
+    "spain": "Spain",
+    "netherlands": "Netherlands",
+    "uae": "United Arab Emirates",
+    "saudi_arabia": "Saudi Arabia",
+    "kuwait": "Kuwait",
+    "qatar": "Qatar",
+    "bahrain": "Bahrain",
+    "oman": "Oman",
+    "jordan": "Jordan",
+    "japan": "Japan",
+    "south_korea": "South Korea",
+    "india": "India",
+    "canada": "Canada"
+  },
+  "auth": {
+    "chooseRole": {
+      "title": "Join FOR YOU",
+      "subtitle": "How do you want to use the platform?",
+      "customerDesc": "Import products from international stores or shop items already in Egypt.",
+      "sellerDesc": "Receive import requests from customers and compete with offers.",
+      "merchantDesc": "List imported inventory you already own for sale on FOR YOU EXPRESS.",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome back to FOR YOU.",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "New to FOR YOU?",
+      "createAccount": "Create an account",
+      "demoLoginTitle": "Dev quick login (seeded accounts)",
+      "demoLoginCustomer": "Log in as Customer",
+      "demoLoginSeller": "Log in as Seller",
+      "demoLoginMerchant": "Log in as Merchant",
+      "demoLoginAdmin": "Log in as Admin"
+    },
+    "register": {
+      "title": "Create your {{role}} account",
+      "email": "Email address",
+      "password": "Password",
+      "passwordHint": "At least 8 characters, with a letter and a number.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "governorate": "Governorate",
+      "city": "City",
+      "mobileNumber": "Mobile number (optional)",
+      "fullName": "Full name",
+      "phoneNumber": "Phone number",
+      "importCountries": "Countries you import from",
+      "importCountriesHint": "Comma-separated, e.g. Turkey, China, USA",
+      "productCategories": "Product categories you handle",
+      "productCategoriesHint": "Comma-separated, e.g. Fashion, Electronics",
+      "facebookPage": "Facebook page (optional)",
+      "instagramPage": "Instagram page (optional)",
+      "businessName": "Business name",
+      "ownerName": "Owner name",
+      "businessCategory": "Business category",
+      "importCountry": "Primary import country",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "otp": {
+      "title": "Verify your email",
+      "subtitle": "We sent a 6-digit code to {{email}}.",
+      "code": "Verification code",
+      "submit": "Verify",
+      "resend": "Didn't get a code? Resend",
+      "resendSuccess": "A new code has been sent if needed.",
+      "changeEmail": "Wrong email?"
+    },
+    "errors": {
+      "VALIDATION_FAILED": "Please check the highlighted fields.",
+      "INVALID_CREDENTIALS": "Incorrect email or password.",
+      "EMAIL_NOT_VERIFIED": "Please verify your email before signing in.",
+      "ACCOUNT_SUSPENDED": "This account has been suspended.",
+      "CONFLICT": "An account with this email already exists.",
+      "OTP_INVALID": "That code isn't right — please try again.",
+      "OTP_EXPIRED": "That code has expired — request a new one.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHENTICATED": "Please sign in to continue.",
+      "INTERNAL_ERROR": "Something went wrong. Please try again."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "yourRoles": "Your roles",
+    "trustLevel": "Trust level",
+    "comingSoon": "This dashboard is being built out phase by phase — you're logged in and this is real.",
+    "pendingReviews": "You have {{count}} completed order(s) waiting for a review",
+    "viewOrders": "View orders",
+    "newRequest": "New import request",
+    "openRequests": "{{count}} open import request(s) match your countries",
+    "recentOrders": "Recent orders",
+    "stats": {
+      "activeOrders": "Active orders",
+      "totalOrders": "Total orders",
+      "wishlist": "Wishlist",
+      "pendingReviews": "Pending reviews",
+      "openRequests": "Open requests",
+      "products": "Products",
+      "totalUsers": "Total users",
+      "completedGMV": "Completed GMV",
+      "openDisputes": "Open disputes",
+      "avgRating": "Avg. rating"
+    }
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Please check the highlighted fields.",
+    "UNAUTHENTICATED": "Please sign in to continue.",
+    "FORBIDDEN": "You don't have permission to do that.",
+    "NOT_FOUND": "That couldn't be found.",
+    "CONFLICT": "That action can't be completed right now.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+    "ACCOUNT_SUSPENDED": "This account has been suspended.",
+    "MAINTENANCE_MODE": "The platform is temporarily down for maintenance.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "home": "Home",
+    "browse": "Browse",
+    "importRequests": "Import Requests",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "disputes": "Disputes",
+    "news": "News",
+    "switchRole": "Switch role",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "verification": "Verification",
+    "myProducts": "My Products",
+    "requestQueue": "Request Queue",
+    "myOffers": "My Offers",
+    "wallet": "Wallet",
+    "reviews": "Reviews",
+    "verificationQueue": "Verification Queue",
+    "moderationQueue": "Moderation Queue",
+    "disputesQueue": "Disputes Queue",
+    "users": "Users",
+    "settings": "Settings",
+    "stats": "Stats",
+    "withdrawals": "Withdrawals",
+    "catalog": "Catalog",
+    "profile": "Profile",
+    "reviewsQueue": "Reviews"
+  },
+  "profile": {
+    "title": "My profile",
+    "memberSince": "Member since",
+    "saved": "Saved",
+    "personalInfo": "{{role}} information",
+    "language": "Language",
+    "password": {
+      "title": "Password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Change password"
+    },
+    "addresses": {
+      "title": "Saved addresses",
+      "add": "Add address",
+      "empty": "No saved addresses yet",
+      "default": "Default",
+      "label": "Label",
+      "addressLine": "Address",
+      "setDefault": "Set as default",
+      "save": "Save address"
+    },
+    "verification": {
+      "title": "Verification",
+      "manageHint": "Manage your verification documents for each role."
+    }
+  },
+  "accountStatus": {
+    "active": "Active",
+    "suspended": "Suspended",
+    "banned": "Banned"
+  },
+  "verificationRequestType": {
+    "identity": "Identity verification",
+    "business": "Business verification"
+  },
+  "documentType": {
+    "national_id": "National ID",
+    "selfie": "Selfie",
+    "commercial_registration": "Commercial registration"
+  },
+  "newsStatus": {
+    "draft": "Draft",
+    "published": "Published"
+  },
+  "admin": {
+    "verification": {
+      "title": "Verification queue",
+      "empty": "No pending verification requests",
+      "userId": "User: {{id}}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "requestMoreDocs": "Request more documents",
+      "reasonLabel": "Reason",
+      "messageLabel": "Message"
+    },
+    "products": {
+      "title": "Product moderation queue",
+      "empty": "No products pending review",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "disputes": {
+      "awaitingReview": "Ready for your review",
+      "awaitingReviewHint": "The seller/merchant has responded — these are ready to resolve.",
+      "waitingOnFulfiller": "Waiting on the seller/merchant",
+      "waitingOnFulfillerHint": "Still within their 48-hour response window.",
+      "emptyReview": "Nothing ready for review",
+      "emptyQueue": "No open disputes",
+      "evidence": "Evidence",
+      "resolveTitle": "Resolve this dispute",
+      "resolution": "Resolution",
+      "resolutionNote": "Resolution note",
+      "refundAmount": "Refund amount",
+      "counterfeitConfirmed": "Confirmed counterfeit product",
+      "falseDispute": "This is a false dispute",
+      "resolveSubmit": "Resolve dispute"
+    },
+    "withdrawals": {
+      "title": "Withdrawal requests",
+      "empty": "No pending withdrawal requests",
+      "userId": "User: {{id}}",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "users": {
+      "title": "Users",
+      "filterRole": "Role",
+      "allRoles": "All roles",
+      "filterStatus": "Status",
+      "allStatuses": "All statuses",
+      "search": "Search by email",
+      "registered": "Registered {{date}}",
+      "suspendReason": "Reason (optional)",
+      "suspend": "Suspend account",
+      "reactivate": "Reactivate account"
+    },
+    "catalog": {
+      "title": "Catalog",
+      "categories": "Categories",
+      "brands": "Brands",
+      "nameEn": "Name (English)",
+      "nameAr": "Name (Arabic)",
+      "brandName": "Brand name"
+    },
+    "settings": {
+      "title": "Platform settings",
+      "platformTitle": "General settings",
+      "maintenanceMode": "Maintenance mode (blocks new writes platform-wide)",
+      "supportEmail": "Support email",
+      "minWithdrawalAmount": "Minimum withdrawal amount",
+      "platformAnnouncement": "Platform announcement",
+      "commissionRates": "Commission rates",
+      "role": "Role",
+      "newPercentage": "New percentage"
+    },
+    "stats": {
+      "title": "Platform stats",
+      "completedGMV": "Completed GMV",
+      "platformBalances": "Platform available balance",
+      "pendingWithdrawals": "Pending withdrawals",
+      "averageRating": "Average rating",
+      "usersByRole": "Users by role",
+      "usersByStatus": "Users by status",
+      "ordersByStage": "Orders by stage",
+      "disputesByStatus": "Disputes by status",
+      "disputeIntegrity": "Dispute integrity",
+      "counterfeitConfirmed": "Counterfeit confirmed",
+      "falseDisputes": "False disputes"
+    },
+    "news": {
+      "title": "News & trends",
+      "create": "New post",
+      "postTitle": "Title",
+      "postBody": "Body",
+      "empty": "No posts yet",
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "empty": "No reviews yet",
+      "hidden": "Hidden",
+      "hide": "Hide",
+      "unhide": "Unhide",
+      "removeReply": "Remove reply"
+    }
+  },
+  "productStatus": {
+    "available": "Available",
+    "low_stock": "Low stock",
+    "out_of_stock": "Out of stock",
+    "coming_soon": "Coming soon"
+  },
+  "trustLevel": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "average": "Average",
+    "low": "Low"
+  },
+  "catalog": {
+    "noImage": "No image",
+    "browse": {
+      "title": "Browse products",
+      "search": "Search",
+      "category": "Category",
+      "allCategories": "All categories",
+      "sort": "Sort by",
+      "sortNewest": "Newest",
+      "sortLowestPrice": "Price: low to high",
+      "sortHighestPrice": "Price: high to low",
+      "searchSubmit": "Search",
+      "empty": "No products found",
+      "emptyHint": "Try a different search or filter."
+    },
+    "product": {
+      "shipping": "shipping",
+      "quantity": "Quantity",
+      "buyNow": "Buy now",
+      "unavailable": "This product isn't available for purchase right now.",
+      "notifyMe": "Notify me when available",
+      "notifySubscribed": "We'll notify you",
+      "description": "Description",
+      "countryOfOrigin": "Country of origin",
+      "warranty": "Warranty",
+      "category": "Category",
+      "brand": "Brand"
+    }
+  },
+  "wishlist": {
+    "add": "Add to wishlist",
+    "remove": "Remove from wishlist",
+    "page": {
+      "title": "Wishlist",
+      "empty": "Your wishlist is empty",
+      "emptyHint": "Tap the heart on any product to save it here."
+    }
+  },
+  "importRequestStatus": {
+    "open": "Open",
+    "offer_selected": "Offer selected",
+    "closed": "Closed",
+    "expired": "Expired"
+  },
+  "importRequests": {
+    "create": {
+      "title": "New import request",
+      "subtitle": "Share the product links and we'll send this to matching sellers.",
+      "links": "Product links",
+      "linksHint": "One link per line.",
+      "sourceCountry": "Source country (optional)",
+      "sourceCountryHint": "Helps match sellers who import from this country.",
+      "anyCountry": "Any country",
+      "preferences": "Notes for sellers (optional)",
+      "preferencesHint": "Color, size, quantity — no prices or budgets, please.",
+      "priceWarning": "Please don't include prices or budgets in the request description — sellers will submit their price offers within the platform.",
+      "submit": "Submit request"
+    },
+    "list": {
+      "title": "My import requests",
+      "create": "New request",
+      "empty": "No import requests yet",
+      "emptyHint": "Create one to get competitive offers from sellers.",
+      "linksCount": "link(s)"
+    },
+    "detail": {
+      "title": "Import request",
+      "links": "Links",
+      "preferences": "Notes",
+      "sourceCountry": "Source country",
+      "cancel": "Cancel request",
+      "orderCreated": "An order was created from this request.",
+      "viewOrder": "View order",
+      "offers": "Offers",
+      "noOffers": "No offers yet",
+      "noOffersHint": "Sellers are reviewing your request — check back soon.",
+      "deliveryIn": "delivery in {{days}} days",
+      "depositOf": "{{percent}}% deposit",
+      "selectOffer": "Select this offer",
+      "seller": "Seller"
+    }
+  },
+  "counterpartyModal": {
+    "memberSince": "Member since {{date}}"
+  },
+  "orderType": {
+    "import": "Import order",
+    "express": "Express order"
+  },
+  "orderStage": {
+    "awaiting_deposit": "Awaiting deposit",
+    "deposit_paid": "Deposit paid",
+    "processing": "Processing",
+    "delivered": "Delivered",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "orderTimelineStep": {
+    "waiting_to_place_order": "Waiting to place order",
+    "order_placed": "Order placed",
+    "shipment_in_progress": "Shipment in progress",
+    "shipment_arrived_in_egypt": "Arrived in Egypt",
+    "out_for_delivery": "Out for delivery",
+    "delivered": "Delivered"
+  },
+  "orders": {
+    "list": {
+      "title": "My orders",
+      "empty": "No orders yet",
+      "emptyHint": "Orders you place will show up here.",
+      "customer": "Customer"
+    },
+    "detail": {
+      "disputeOpen": "Dispute open",
+      "payment": "Payment",
+      "payDeposit": "Pay deposit",
+      "openCheckout": "Open Paymob checkout",
+      "devModeHint": "Dev mode: use the button below to simulate a successful payment instead of a real gateway.",
+      "simulatePayment": "Simulate payment (dev)",
+      "timeline": "Delivery timeline",
+      "confirmReceipt": "Confirm receipt",
+      "openDispute": "Open a dispute",
+      "cancel": "Cancel order",
+      "yourReview": "Your review",
+      "sellerReply": "Seller reply",
+      "editReview": "Edit review",
+      "leaveReview": "Leave a review",
+      "reviewComment": "Comment (optional)",
+      "submitReview": "Submit review"
+    }
+  },
+  "disputeReason": {
+    "wrong_product": "Wrong product",
+    "wrong_color": "Wrong color",
+    "wrong_size": "Wrong size",
+    "damaged_product": "Damaged product",
+    "missing_items": "Missing items",
+    "item_not_delivered": "Item not delivered",
+    "non_original_product": "Non-original product",
+    "delivery_delay": "Delivery delay"
+  },
+  "disputeStatus": {
+    "open": "Open",
+    "seller_responded": "Seller responded",
+    "resolved": "Resolved"
+  },
+  "disputeResolution": {
+    "full_refund": "Full refund",
+    "partial_refund": "Partial refund",
+    "replacement": "Replacement",
+    "missing_item_shipment": "Missing item shipped",
+    "rejected": "Rejected"
+  },
+  "disputes": {
+    "open": {
+      "title": "Open a dispute",
+      "subtitle": "You can open a dispute within 48 hours of delivery.",
+      "reason": "Reason",
+      "description": "What went wrong?",
+      "descriptionHint": "At least 10 characters — the more detail, the faster this resolves.",
+      "photos": "Photo evidence",
+      "photosHint": "At least one photo is required. Video is optional.",
+      "submit": "Submit dispute",
+      "uploadFailed": "Uploading your evidence failed — please try again."
+    },
+    "list": {
+      "title": "My disputes",
+      "empty": "No disputes",
+      "emptyHint": "Disputes you open will show up here."
+    },
+    "detail": {
+      "description": "Description",
+      "opened": "Opened {{date}}",
+      "sellerResponse": "Seller's response",
+      "resolution": "Resolution",
+      "refundAmount": "Refund amount: {{amount}} EGP",
+      "awaitingResponse": "Waiting on the seller to respond — they have 48 hours.",
+      "awaitingAdmin": "The seller responded — an admin will review this shortly."
+    }
+  },
+  "notifications": {
+    "bell": {
+      "label": "Notifications",
+      "title": "Notifications",
+      "viewAll": "View all",
+      "empty": "No notifications yet"
+    },
+    "page": {
+      "title": "Notifications",
+      "markAllRead": "Mark all read",
+      "empty": "No notifications yet",
+      "markRead": "Mark read"
+    }
+  },
+  "news": {
+    "list": {
+      "title": "News & trends",
+      "empty": "No news yet"
+    }
+  },
+  "productModerationStatus": {
+    "published": "Published",
+    "pending_review": "Pending review",
+    "rejected": "Rejected",
+    "hidden": "Hidden"
+  },
+  "verification": {
+    "title": "Verification",
+    "sellerHint": "Verified accounts publish products instantly and get faster wallet payouts.",
+    "merchantHint": "Submit your business registration and/or identity documents to get verified — verified accounts publish products instantly and get faster wallet payouts.",
+    "submit": "Submit for review",
+    "uploadFailed": "Uploading your documents failed — please try again.",
+    "identity": {
+      "title": "Identity verification",
+      "nationalId": "National ID photo",
+      "selfie": "Selfie photo"
+    },
+    "business": {
+      "title": "Business verification",
+      "commercialRegistration": "Commercial registration document"
+    }
+  },
+  "verificationStatus": {
+    "pending": "Pending review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "more_docs_needed": "More documents needed",
+    "revoked": "Revoked"
+  },
+  "ownerProducts": {
+    "list": {
+      "title": "My products",
+      "create": "New product",
+      "empty": "No products yet",
+      "emptyHint": "Create your first product listing to start selling."
+    },
+    "form": {
+      "createTitle": "New product",
+      "editTitle": "Edit product",
+      "name": "Product name",
+      "selectOne": "Select one",
+      "shortDescription": "Short description",
+      "detailedDescription": "Detailed description",
+      "price": "Price",
+      "shippingCost": "Shipping cost",
+      "quantity": "Available quantity",
+      "comingSoon": "Coming soon",
+      "tags": "Tags",
+      "tagsHint": "Comma-separated, e.g. wireless, bluetooth",
+      "images": "Images",
+      "cover": "Cover",
+      "originPhoto": "Origin photo",
+      "uploadFailed": "Uploading an image failed — please try again.",
+      "uploading": "Uploading…",
+      "imagesRequired": "Add at least one product image before saving."
+    }
+  },
+  "sellerQueue": {
+    "title": "Import request queue",
+    "empty": "No open requests",
+    "emptyHint": "New requests matching your import countries will show up here.",
+    "ignore": "Ignore",
+    "submitOffer": "Submit offer",
+    "myOffers": "My offers",
+    "noOffersYet": "You haven't submitted any offers yet",
+    "editOffer": "Edit",
+    "cancelOffer": "Cancel offer",
+    "customer": "Customer",
+    "form": {
+      "title": "Submit an offer",
+      "totalPrice": "Total price",
+      "estimatedDeliveryDays": "Estimated delivery (days)",
+      "depositPercentage": "Deposit percentage",
+      "submit": "Submit offer"
+    }
+  },
+  "offerStatus": {
+    "active": "Active",
+    "selected": "Selected",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "available": "Available balance",
+    "pending": "Pending balance",
+    "requestWithdrawal": "Request a withdrawal",
+    "amount": "Amount",
+    "withdraw": "Withdraw",
+    "withdrawalHistory": "Withdrawal history",
+    "noWithdrawals": "No withdrawal requests yet",
+    "transactionHistory": "Transaction history",
+    "noTransactions": "No transactions yet"
+  },
+  "withdrawalStatus": {
+    "pending": "Pending",
+    "processed": "Processed",
+    "rejected": "Rejected"
+  },
+  "walletTransactionType": {
+    "deposit_credit": "Deposit received",
+    "balance_release": "Balance released",
+    "commission_charge": "Commission",
+    "withdrawal": "Withdrawal",
+    "refund_reversal": "Refund reversal"
+  },
+  "fulfillerOrders": {
+    "updateTimeline": "Update delivery timeline",
+    "step": "Step",
+    "note": "Note (optional)",
+    "cancelOrder": "Cancel order",
+    "cancelReason": "Reason"
+  },
+  "fulfillerReviews": {
+    "title": "Reviews",
+    "empty": "No reviews yet",
+    "yourReply": "Your reply",
+    "replyLabel": "Reply",
+    "reply": "Reply"
+  },
+  "customerReviews": {
+    "title": "Reviews",
+    "pendingTitle": "Pending reviews",
+    "pendingEmpty": "No orders waiting for a review",
+    "submittedTitle": "Your reviews",
+    "submittedEmpty": "You haven't left any reviews yet",
+    "completedOn": "Completed {{date}}",
+    "viewOrder": "View order"
+  },
+  "fulfillerDisputes": {
+    "respond": "Respond",
+    "responseLabel": "Your response"
+  },
+  "landing": {
+    "intro": {
+      "skip": "Skip intro ⏭",
+      "egypt": "Egypt",
+      "regions": {
+        "china": "Import easily from China.",
+        "turkey": "The best offers from Turkey.",
+        "gulf": "Shop from the Gulf with confidence.",
+        "europe": "European products, right at your door.",
+        "usa": "The whole world just got closer."
+      },
+      "regionLabels": {
+        "china": "China",
+        "turkey": "Turkey",
+        "gulf": "Gulf",
+        "europe": "Europe",
+        "usa": "USA"
+      }
+    },
+    "nav": {
+      "roles": "Choose Your Role",
+      "faq": "FAQ",
+      "signIn": "Sign in",
+      "learnMore": "Learn more"
+    },
+    "hero": {
+      "eyebrow": "Coming soon",
+      "title": "The whole world, in one place.",
+      "subtitle": "Share your cart from any store worldwide, receive offers from trusted sellers, then choose the offer that suits you best.",
+      "cta": "Get started",
+      "secondaryCta": "Choose your role"
+    },
+    "roles": {
+      "title": "Choose Your Role",
+      "subtitle": "FOR YOU works differently depending on what you're here to do.",
+      "customer": {
+        "title": "I'm Looking for the Best Deal",
+        "body": [
+          "Tired of searching dozens of Facebook pages every day?",
+          "Not sure which seller you can actually trust?",
+          "Afraid of paying a deposit then receiving the wrong product?"
+        ],
+        "intro": "With FOR YOU you'll be able to:",
+        "checks": [
+          "Receive offers from multiple trusted sellers in one place.",
+          "Compare prices, delivery times, seller ratings and trust before choosing.",
+          "Track your order step by step.",
+          "Buy with much more confidence."
+        ],
+        "cta": "Want to become one of our first users during launch?",
+        "telegram": "Join our Customer Telegram Community"
+      },
+      "seller": {
+        "title": "I Import & Sell",
+        "body": [
+          "Do you already import products but struggle to find serious buyers?",
+          "Tired of answering hundreds of messages every day?",
+          "Want customers to come directly to YOU?"
+        ],
+        "intro": "With FOR YOU you'll be able to:",
+        "checks": [
+          "Receive real purchase requests every day.",
+          "Submit offers directly to interested customers.",
+          "Build your reputation through Trust Score and Reviews.",
+          "Increase your sales without relying only on social media."
+        ],
+        "cta": "Join the Seller Telegram Community and become one of FOR YOU's founding sellers.",
+        "telegram": "Join Seller Telegram Community"
+      },
+      "merchant": {
+        "title": "I Have Products Ready to Sell",
+        "body": [
+          "Already have products available inside Egypt?",
+          "Looking for a better way to reach customers?",
+          "Want your store to gain more trust and visibility?"
+        ],
+        "intro": "With FOR YOU EXPRESS you'll be able to:",
+        "checks": [
+          "Showcase your ready-stock products.",
+          "Reach customers actively searching for them.",
+          "Build trust through account verification.",
+          "Grow your business with a modern marketplace."
+        ],
+        "cta": "Join the Merchant Telegram Community and become one of FOR YOU's founding merchants.",
+        "telegram": "Join Merchant Telegram Community"
+      }
+    },
+    "steps": {
+      "title": "How does it work?",
+      "customer": [
+        "Share your cart or product links",
+        "Receive offers from trusted sellers",
+        "Compare and choose the best one"
+      ],
+      "seller": [
+        "Receive ready import requests",
+        "Send your competitive offer",
+        "Win the customer and deliver"
+      ],
+      "merchant": [
+        "List your ready-to-ship products",
+        "Reach customers searching for them",
+        "Sell faster with FOR YOU EXPRESS"
+      ]
+    },
+    "benefits": {
+      "title": "Why FOR YOU?",
+      "customer": [
+        { "icon": "💰", "label": "Best price" },
+        { "icon": "🛡️", "label": "Trusted sellers" },
+        { "icon": "⚖️", "label": "Easy comparison" },
+        { "icon": "🌍", "label": "Any store worldwide" }
+      ],
+      "seller": [
+        { "icon": "📦", "label": "Ready requests" },
+        { "icon": "📈", "label": "Sell more" },
+        { "icon": "🎛️", "label": "Full control" },
+        { "icon": "⚡", "label": "FOR YOU EXPRESS" }
+      ],
+      "merchant": [
+        { "icon": "🏪", "label": "Showcase your stock" },
+        { "icon": "🔎", "label": "Get discovered" },
+        { "icon": "🛡️", "label": "Verified trust" },
+        { "icon": "🚀", "label": "Grow faster" }
+      ]
+    },
+    "compare": {
+      "title": "Before FOR YOU... and after",
+      "subtitle": "See the difference for yourself",
+      "oldLabel": "The old way",
+      "newLabel": "With FOR YOU",
+      "oldMessages": [
+        "WhatsApp: ok I'll send you the price tomorrow 🙏",
+        "Messenger: delivery takes about 3 weeks",
+        "Me: ok but what's the exact price? 😅",
+        "Facebook page: available, I'll reply soon",
+        "Shipping calculator: maybe around 1,450 EGP?"
+      ],
+      "offers": [
+        { "label": "Verified seller ★4.9", "price": "2,100 EGP" },
+        { "label": "Delivery in 5 days", "price": "1,950 EGP" },
+        { "label": "✓ Best — fast delivery", "price": "1,880 EGP", "best": true }
+      ],
+      "taglineStart": "Instead of searching dozens of sellers... ",
+      "taglineEmphasis": "let sellers compete for you."
+    },
+    "express": {
+      "badge": "⚡ FOR YOU EXPRESS",
+      "title": "Have ready-to-ship products?",
+      "body": "List your imported stock already inside Egypt and reach customers who want it fast — no waiting for import requests."
+    },
+    "getStarted": {
+      "title": "Ready to get started?",
+      "subtitle": "Choose how you want to use FOR YOU",
+      "cta": "Create your account"
+    },
+    "finalCta": {
+      "title": "Be one of the first to change how Egypt shops the world."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know before we launch.",
+      "items": [
+        {
+          "q": "What is FOR YOU?",
+          "a": "FOR YOU is a marketplace where you share your shopping cart from any store in the world, receive competing offers from trusted sellers, and choose the one that suits you best — plus FOR YOU EXPRESS for ready-to-ship products already inside Egypt."
+        },
+        {
+          "q": "How is FOR YOU different from ordering through Facebook or WhatsApp groups?",
+          "a": "Instead of messaging dozens of pages and waiting for replies, you post your request once and let verified sellers compete for your order — with visible prices, delivery times, and trust scores, all in one place."
+        },
+        {
+          "q": "Is my deposit safe?",
+          "a": "Yes. Deposits are held securely and only released to the seller according to the order's delivery stage, with dispute protection if something goes wrong."
+        },
+        {
+          "q": "What is FOR YOU EXPRESS?",
+          "a": "FOR YOU EXPRESS is for merchants who already have imported stock inside Egypt — you can browse and buy ready-to-ship products immediately, without waiting for an import request."
+        },
+        {
+          "q": "When does FOR YOU launch?",
+          "a": "We're in our pre-launch phase right now. Join the waitlist or your role's Telegram community above to be notified the moment we go live."
+        },
+        {
+          "q": "Can I join both the Seller and Merchant Telegram communities?",
+          "a": "Absolutely.\n\nIf you import products and also have ready-stock products available inside Egypt, you are welcome to join BOTH Telegram communities.\n\nMany FOR YOU sellers also sell products through FOR YOU EXPRESS, so joining both groups ensures you receive all launch updates, announcements, opportunities, and resources related to both roles."
+        }
+      ]
+    },
+    "footer": "FOR YOU © 2026 — the trusted global shopping platform, made in Egypt 🇪🇬",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in"
+  }
+}

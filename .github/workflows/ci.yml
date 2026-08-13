@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Same DB the tests are designed to run against (README "Testing") — real
+  # Postgres/Redis, not mocks, since the schema/constraints are under test.
+  NODE_ENV: test
+  DATABASE_URL: postgres://foryou:foryou@localhost:5432/foryou_ci
+  REDIS_URL: redis://localhost:6379
+  JWT_ACCESS_SECRET: ci-access-secret-0000000000000000
+  JWT_REFRESH_SECRET: ci-refresh-secret-0000000000000000
+  PAYMOB_HMAC_SECRET: ci-mock-hmac-secret
+
+jobs:
+  lint-typecheck-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: foryou
+          POSTGRES_PASSWORD: foryou
+          POSTGRES_DB: foryou_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U foryou -d foryou_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w packages/shared
+      - run: npm run db:migrate -w apps/api
+      - run: npm run test -w apps/api
+      - run: npm run test -w apps/web

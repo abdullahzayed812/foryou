@@ -1,0 +1,25 @@
+node_modules
+dist
+build
+coverage
+.env
+.env.*
+!.env.example
+!.env.production.example
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# drizzle
+apps/api/drizzle/meta
+
+# docker
+docker/data
+
+# vite
+apps/web/.vite
+
+# misc
+*.tsbuildinfo
