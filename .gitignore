@@ -12,9 +12,6 @@ coverage
 !.vscode/extensions.json
 .idea
 
-# drizzle
-apps/api/drizzle/meta
-
 # docker
 docker/data
 
