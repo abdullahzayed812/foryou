@@ -59,7 +59,11 @@ done
 
 echo "### Requesting real certs from Let's Encrypt ..."
 for domain in "${domains[@]}"; do
-  compose run --rm certbot certonly --webroot -w /var/www/certbot \
+  # --entrypoint certbot is required: the certbot service's own entrypoint
+  # (docker-compose.prod.yml) is the long-running renew loop, not the
+  # certbot binary directly, so `run` without this override would silently
+  # ignore the `certonly ...` args below and just run that loop instead.
+  compose run --rm --entrypoint certbot certbot certonly --webroot -w /var/www/certbot \
     --email "$email" --agree-tos --no-eff-email $staging_arg \
     -d "$domain"
 done
