@@ -29,8 +29,9 @@ packages/
 docker-compose.dev.yml    Local dev infra: Postgres, Redis, MinIO (R2-compatible), Mailhog
 docker-compose.prod.yml   Production stack: Postgres, Redis, api, worker, web (Nginx), a one-shot migrate job
 apps/api/Dockerfile       Multi-stage prod image — also runs the worker (different CMD, see compose)
-apps/web/Dockerfile       Multi-stage prod image — vite build served by Nginx, proxies /api + /socket.io to api
-docker/nginx/web.conf     Nginx config baked into the web image
+apps/web/Dockerfile       Multi-stage prod image — vite build served by Nginx
+docker/nginx/web.conf     Nginx config baked into the web image (serves the SPA only)
+docker/nginx/vps/         Host-level Nginx configs for the VPS itself — subdomain routing + TLS, see its README
 .github/workflows/        CI (lint/typecheck/test/build) + CD (build & push images to GHCR on main)
 ```
 
@@ -111,6 +112,17 @@ Production is a self-hosted Docker stack (`docker-compose.prod.yml`) — swap
 `postgres`/`redis` for managed services by pointing `DATABASE_URL`/`REDIS_URL`
 at them and dropping those two services; nothing else changes.
 
+`web` and `api` are split across two public subdomains (`foryou.citymarket.tech`,
+`api.foryou.citymarket.tech`) rather than sharing one origin. Both containers
+bind to `127.0.0.1` only (see `WEB_PORT`/`API_PORT` in `.env.production.example`)
+— a host-level Nginx on the VPS owns the real port 80/443, terminates TLS, and
+reverse-proxies by hostname to those loopback ports. Set that up once per VPS
+following `docker/nginx/vps/README.md` (also handles Let's Encrypt via certbot),
+which lets the same box host other, unrelated sites on `citymarket.tech`
+alongside this app. The browser talks to `api.foryou.citymarket.tech` directly
+(`VITE_API_URL`), so CORS (`WEB_URL` → `allowedOrigins`, `apps/api/src/config/env.ts`)
+is what keeps that origin split safe rather than same-origin proxying.
+
 ```bash
 cp .env.production.example .env   # fill in real secrets — see comments inline
 docker compose -f docker-compose.prod.yml up -d --build
@@ -119,10 +131,9 @@ docker compose -f docker-compose.prod.yml up -d --build
 This builds the `api`/`worker` image once (`apps/api/Dockerfile` — same image,
 different `command:` per service), runs `migrate` to completion before `api`/
 `worker` start (`depends_on: condition: service_completed_successfully`), and
-builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx, which also
-reverse-proxies `/api/v1` and `/socket.io` to `api` so the browser never needs
-CORS in production). Every long-running service has a Docker `HEALTHCHECK`
-against `/healthz` (liveness) or `/readyz` (readiness — checks DB + Redis).
+builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx). Every
+long-running service has a Docker `HEALTHCHECK` against `/healthz` (liveness)
+or `/readyz` (readiness — checks DB + Redis).
 
 **CI/CD** (`.github/workflows/`): `ci.yml` runs lint + typecheck + build on
 every push/PR, plus the real Vitest suite against actual Postgres/Redis
