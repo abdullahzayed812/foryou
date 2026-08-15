@@ -7,11 +7,12 @@ name: foryou-prod
 # unlike docker-compose.dev.yml.
 #
 # `web` and `api` are split across two public subdomains (foryou.citymarket.tech,
-# api.foryou.citymarket.tech), fronted by a host-level Nginx that owns port
-# 80/443 and terminates TLS (see docker/nginx/vps/) — not the Nginx baked
-# into the web image, which only serves inside its own container. That's why
-# both ports below bind to 127.0.0.1 only: neither container is reachable
-# from outside the VPS except through the host Nginx reverse proxy.
+# api.foryou.citymarket.tech), fronted by the `nginx` service below — the only
+# container bound to the VPS's public 80/443, terminating TLS via certs the
+# `certbot` service issues/renews (bootstrap once with scripts/init-letsencrypt.sh).
+# `web`/`api` publish no host ports at all; `nginx` reaches them over the
+# internal Docker network by service name. The Nginx baked into the web image
+# itself (docker/nginx/web.conf) only serves inside that one container.
 
 services:
   postgres:
@@ -66,8 +67,6 @@ services:
     env_file: .env
     environment:
       NODE_ENV: production
-    ports:
-      - "127.0.0.1:${API_PORT:-4000}:4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -106,14 +105,49 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL:-/api/v1}
     restart: always
-    ports:
-      - "127.0.0.1:${WEB_PORT:-8081}:80"
     depends_on:
       - api
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "3" }
 
+  # TLS-terminating reverse proxy — the only service bound to the VPS's
+  # public ports. Reloads itself every 6h (via `command:` below) to pick up
+  # certs the `certbot` service renews, since nginx doesn't watch cert files
+  # for changes on its own.
+  nginx:
+    image: nginx:1.27-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/edge/conf.d:/etc/nginx/conf.d:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    command: >
+      /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
+    depends_on:
+      - web
+      - api
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  # Renews certs every 12h (a no-op until they're within their renewal
+  # window); does NOT issue the first cert — that chicken-and-egg bootstrap
+  # is scripts/init-letsencrypt.sh, run once before `nginx` can start clean.
+  certbot:
+    image: certbot/certbot:latest
+    restart: always
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done"
+
 volumes:
   foryou_pgdata:
   foryou_redisdata:
+  certbot_conf:
+  certbot_www:

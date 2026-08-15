@@ -31,7 +31,9 @@ docker-compose.prod.yml   Production stack: Postgres, Redis, api, worker, web (N
 apps/api/Dockerfile       Multi-stage prod image — also runs the worker (different CMD, see compose)
 apps/web/Dockerfile       Multi-stage prod image — vite build served by Nginx
 docker/nginx/web.conf     Nginx config baked into the web image (serves the SPA only)
-docker/nginx/vps/         Host-level Nginx configs for the VPS itself — subdomain routing + TLS, see its README
+docker/nginx/edge/        TLS-terminating reverse-proxy Nginx — the `nginx` service in docker-compose.prod.yml
+scripts/setup-prod-env.sh Generates .env from .env.production.example with fresh secrets (run on the VPS)
+scripts/init-letsencrypt.sh One-time bootstrap for the first real Let's Encrypt certs (run on the VPS)
 .github/workflows/        CI (lint/typecheck/test/build) + CD (build & push images to GHCR on main)
 ```
 
@@ -113,19 +115,23 @@ Production is a self-hosted Docker stack (`docker-compose.prod.yml`) — swap
 at them and dropping those two services; nothing else changes.
 
 `web` and `api` are split across two public subdomains (`foryou.citymarket.tech`,
-`api.foryou.citymarket.tech`) rather than sharing one origin. Both containers
-bind to `127.0.0.1` only (see `WEB_PORT`/`API_PORT` in `.env.production.example`)
-— a host-level Nginx on the VPS owns the real port 80/443, terminates TLS, and
-reverse-proxies by hostname to those loopback ports. Set that up once per VPS
-following `docker/nginx/vps/README.md` (also handles Let's Encrypt via certbot),
-which lets the same box host other, unrelated sites on `citymarket.tech`
-alongside this app. The browser talks to `api.foryou.citymarket.tech` directly
-(`VITE_API_URL`), so CORS (`WEB_URL` → `allowedOrigins`, `apps/api/src/config/env.ts`)
-is what keeps that origin split safe rather than same-origin proxying.
+`api.foryou.citymarket.tech`) rather than sharing one origin, and everything —
+including the TLS-terminating reverse proxy — runs as containers; nothing is
+installed on the VPS itself beyond Docker. An `nginx` service (`docker/nginx/edge/`)
+is the only container bound to the public 80/443 and routes to `web`/`api` by
+hostname over the internal Docker network; a `certbot` service shares a volume
+with it and renews Let's Encrypt certs every 12h. The browser talks to
+`api.foryou.citymarket.tech` directly (`VITE_API_URL`), so CORS (`WEB_URL` →
+`allowedOrigins`, `apps/api/src/config/env.ts`) is what keeps that origin
+split safe rather than same-origin proxying.
 
 ```bash
-cp .env.production.example .env   # fill in real secrets — see comments inline
+./scripts/setup-prod-env.sh   # copies .env.production.example → .env, generates
+                               # POSTGRES_PASSWORD/JWT secrets — never commit .env
+nano .env                     # fill in CERTBOT_EMAIL, the Cloudflare R2 (S3_*)
+                               # vars, plus SMTP_*/PAYMOB_*/SENTRY_DSN when ready
 docker compose -f docker-compose.prod.yml up -d --build
+./scripts/init-letsencrypt.sh  # one-time: issues the first real TLS certs
 ```
 
 This builds the `api`/`worker` image once (`apps/api/Dockerfile` — same image,
@@ -134,6 +140,15 @@ different `command:` per service), runs `migrate` to completion before `api`/
 builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx). Every
 long-running service has a Docker `HEALTHCHECK` against `/healthz` (liveness)
 or `/readyz` (readiness — checks DB + Redis).
+
+**Redeploying**: `nginx` resolves the `web`/`api` container addresses once at
+startup/reload, not per-request, so recreating those containers without also
+reloading `nginx` leaves it pointing at their old (now-gone) addresses:
+
+```bash
+git pull && docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
+```
 
 **CI/CD** (`.github/workflows/`): `ci.yml` runs lint + typecheck + build on
 every push/PR, plus the real Vitest suite against actual Postgres/Redis
