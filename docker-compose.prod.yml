@@ -7,12 +7,19 @@ name: foryou-prod
 # unlike docker-compose.dev.yml.
 #
 # `web` and `api` are split across two public subdomains (foryou.citymarket.tech,
-# api.foryou.citymarket.tech), fronted by the `nginx` service below — the only
-# container bound to the VPS's public 80/443, terminating TLS via certs the
-# `certbot` service issues/renews (bootstrap once with scripts/init-letsencrypt.sh).
-# `web`/`api` publish no host ports at all; `nginx` reaches them over the
-# internal Docker network by service name. The Nginx baked into the web image
-# itself (docker/nginx/web.conf) only serves inside that one container.
+# api.foryou.citymarket.tech), but this VPS is shared with other apps under
+# citymarket.tech that already have their own Nginx gateway (project
+# "citymarket", container citymarket-nginx-1) permanently bound to the VPS's
+# public 80/443 — a second Nginx here would just conflict on those ports. So
+# `web`/`api` publish no host ports at all; instead they join that other
+# project's Docker network (`citymarket_citymarket`, external: true below) so
+# its gateway can reverse-proxy to them by container name, the same way it
+# already does for its own admin/vendor/delivery dashboards. See
+# /opt/citymarket/nginx/nginx.ssl.conf on the VPS for the two server blocks
+# (foryou.citymarket.tech, api.foryou.citymarket.tech) that make this work,
+# and DEPLOYMENT.md there for how its certificate (shared, --expand'd to
+# cover these two extra names) is issued/renewed. The Nginx baked into our
+# own web image (docker/nginx/web.conf) only serves inside that one container.
 
 services:
   postgres:
@@ -67,6 +74,10 @@ services:
     env_file: .env
     environment:
       NODE_ENV: production
+    networks:
+      default: {}
+      citymarket_citymarket:
+        aliases: [foryou-api]
     depends_on:
       postgres:
         condition: service_healthy
@@ -105,49 +116,25 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL:-/api/v1}
     restart: always
+    networks:
+      default: {}
+      citymarket_citymarket:
+        aliases: [foryou-web]
     depends_on:
       - api
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "3" }
-
-  # TLS-terminating reverse proxy — the only service bound to the VPS's
-  # public ports. Reloads itself every 6h (via `command:` below) to pick up
-  # certs the `certbot` service renews, since nginx doesn't watch cert files
-  # for changes on its own.
-  nginx:
-    image: nginx:1.27-alpine
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./docker/nginx/edge/conf.d:/etc/nginx/conf.d:ro
-      - certbot_conf:/etc/letsencrypt:ro
-      - certbot_www:/var/www/certbot:ro
-    command: >
-      /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
-    depends_on:
-      - web
-      - api
-    logging:
-      driver: json-file
-      options: { max-size: "10m", max-file: "3" }
-
-  # Renews certs every 12h (a no-op until they're within their renewal
-  # window); does NOT issue the first cert — that chicken-and-egg bootstrap
-  # is scripts/init-letsencrypt.sh, run once before `nginx` can start clean.
-  certbot:
-    image: certbot/certbot:latest
-    restart: always
-    volumes:
-      - certbot_conf:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    entrypoint: >
-      /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done"
 
 volumes:
   foryou_pgdata:
   foryou_redisdata:
-  certbot_conf:
-  certbot_www:
+
+networks:
+  default: {}
+  # The other project's ("citymarket") Docker Compose network — its Nginx
+  # gateway lives there and needs to reach `web`/`api` by name. Must already
+  # exist (created automatically whenever /opt/citymarket's own compose
+  # stack is up); this project only joins it, never creates/owns it.
+  citymarket_citymarket:
+    external: true

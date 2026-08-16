@@ -10,7 +10,6 @@
 # Everything else in .env.production.example already targets citymarket.tech
 # correctly (APP_URL/WEB_URL/VITE_API_URL) and needs no edits. What's left
 # for you to fill in by hand afterward:
-#   - CERTBOT_EMAIL (required before running scripts/init-letsencrypt.sh)
 #   - S3_ENDPOINT / S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY / MEDIA_PUBLIC_BASE_URL
 #     (Cloudflare R2 — required for product/verification image uploads to work)
 #   - SMTP_HOST/PORT/USER/PASS (optional — email sending no-ops without it)
@@ -49,7 +48,6 @@ cat <<'EOF'
 .env created with fresh POSTGRES_PASSWORD / JWT_ACCESS_SECRET / JWT_REFRESH_SECRET.
 
 Still needed before `docker compose -f docker-compose.prod.yml up -d --build`:
-  - CERTBOT_EMAIL (needed before scripts/init-letsencrypt.sh)
   - Cloudflare R2: S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, MEDIA_PUBLIC_BASE_URL
   - (optional, can add later) SMTP_*, PAYMOB_*, SENTRY_DSN
 
