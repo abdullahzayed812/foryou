@@ -30,6 +30,16 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-foryou}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:-foryou}
+    networks:
+      # Explicit unique alias — `api`/`web` are multi-homed (also on
+      # citymarket_citymarket, which has its own differently-named-but-still-
+      # "redis"/"postgres"-aliased services), and Docker's embedded DNS
+      # doesn't scope name resolution per-network for multi-homed
+      # containers, so the bare service name "postgres" is genuinely
+      # ambiguous from their perspective. DATABASE_URL below must use this
+      # alias, not "postgres".
+      default:
+        aliases: [foryou-postgres]
     volumes:
       - foryou_pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -45,6 +55,11 @@ services:
     image: redis:7-alpine
     restart: always
     command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      # See the matching comment on `postgres` above — same ambiguous-DNS
+      # reason. REDIS_URL below must use this alias, not "redis".
+      default:
+        aliases: [foryou-redis]
     volumes:
       - foryou_redisdata:/data
     healthcheck:

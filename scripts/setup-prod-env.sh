@@ -40,7 +40,7 @@ jwt_refresh_secret="$(openssl rand -base64 48 | tr -d '\n')"
 set_var POSTGRES_PASSWORD "$postgres_password"
 set_var JWT_ACCESS_SECRET "$jwt_access_secret"
 set_var JWT_REFRESH_SECRET "$jwt_refresh_secret"
-set_var DATABASE_URL "postgres://$(get_var POSTGRES_USER):${postgres_password}@postgres:5432/$(get_var POSTGRES_DB)"
+set_var DATABASE_URL "postgres://$(get_var POSTGRES_USER):${postgres_password}@foryou-postgres:5432/$(get_var POSTGRES_DB)"
 
 chmod 600 .env
 
