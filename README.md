@@ -91,12 +91,12 @@ Mailhog inbox at http://localhost:8025.
 `npm run db:seed` creates a starter catalog (7 categories, 6 brands) and four
 demo accounts, all with password `Password123`:
 
-| Email | Role | Notes |
-|---|---|---|
-| `admin@foryou.dev` | Admin | full access to `/admin/*` |
-| `customer@foryou.dev` | Customer | |
-| `seller@foryou.dev` | Seller | not yet verified — submit identity verification via the UI to unlock publishing |
-| `merchant@foryou.dev` | Merchant | not yet verified — submit business verification via the UI |
+| Email                 | Role     | Notes                                                                           |
+| --------------------- | -------- | ------------------------------------------------------------------------------- |
+| `admin@foryou.dev`    | Admin    | full access to `/admin/*`                                                       |
+| `customer@foryou.dev` | Customer |                                                                                 |
+| `seller@foryou.dev`   | Seller   | not yet verified — submit identity verification via the UI to unlock publishing |
+| `merchant@foryou.dev` | Merchant | not yet verified — submit business verification via the UI                      |
 
 Products and verification aren't seeded yet — both require a real uploaded
 image (product cover photo, or ID/business documents) through the Media
@@ -137,7 +137,7 @@ This builds the `api`/`worker` image once (`apps/api/Dockerfile` — same image,
 different `command:` per service), runs `migrate` to completion before `api`/
 `worker` start (`depends_on: condition: service_completed_successfully`), and
 builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx; `${DOMAIN}`
-in its config is filled in at container *start*, not build time, via nginx's
+in its config is filled in at container _start_, not build time, via nginx's
 built-in envsubst-on-templates mechanism). Every long-running service has a
 Docker `HEALTHCHECK` against `/healthz` (liveness) or `/readyz` (readiness —
 checks DB + Redis).
@@ -204,3 +204,41 @@ which is why dev/test/CI never set it.
 Integration tests (`*.test.ts`, Vitest + Supertest) run against the real dev
 Postgres/Redis started by `npm run dev:infra` — there's no mocked-DB test mode,
 by design: the tables and constraints are part of what's under test.
+
+The infrastructure setup for your application appears highly robust and well-designed for a VPS deployment.
+
+Strengths of the Current Setup
+
+1.  Production Compose: docker-compose.prod.yml properly manages services, healthchecks, and volume isolation (Postgres, Redis, API,
+    Worker, Web, Certbot).
+2.  Nginx Configuration: docker/nginx/web.conf correctly implements:
+    - HTTPS Enforcement: Redirects HTTP to HTTPS.
+    - TLS Termination: Configures modern SSL protocols and security headers (HSTS, etc.).
+    - Reverse Proxy: Routes traffic to the API, WebSocket, and static assets, eliminating CORS complexity.
+    - Static Asset Optimization: Configures immutable caching for assets.
+3.  SSL/HTTPS Strategy: The scripts/init-letsencrypt.sh script is a best-practice approach for self-hosted apps:
+    - It bootstraps the environment with a "dummy" certificate to allow Nginx to start.
+    - It then replaces it with a valid Let's Encrypt certificate without requiring service downtime.
+    - The certbot service in docker-compose.prod.yml handles automated, ongoing renewal.
+
+Pre-deployment Checklist
+To ensure the deployment succeeds on your VPS, confirm the following:
+
+1.  Environment Variables: Ensure your .env file on the VPS is populated, especially DOMAIN, CERTBOT_EMAIL, and POSTGRES_PASSWORD. Use
+    scripts/setup-prod-env.sh to help with this.
+2.  Domain DNS: Your domain (e.g., foryou.example.com) MUST point its A-record to the IP address of your VPS before you run
+    scripts/init-letsencrypt.sh. Certbot validation will fail if the domain doesn't resolve to that machine.
+3.  Ports 80/443: Ensure your VPS firewall (e.g., ufw) has ports 80 and 443 open.
+4.  No Conflicts: Ensure no other web server (like a pre-installed Apache or another Nginx) is already running on the VPS and listening on
+    ports 80 or 443.
+
+Recommended Deployment Flow
+
+1.  Set up the VPS, install Docker/Docker Compose.
+2.  Clone the repo and configure .env via scripts/setup-prod-env.sh.
+3.  Run docker compose -f docker-compose.prod.yml up -d to spin up everything except the web server (it might fail initially, which is
+    expected).
+4.  Execute ./scripts/init-letsencrypt.sh.
+5.  If everything went well, the script will finish with "Done. https://$domain should now work."
+
+The setup is sound and ready to go. Let me know if you encounter any specific issues during deployment!
