@@ -7,7 +7,7 @@ import { notificationsQueryKey, unreadCountQueryKey } from "./hooks";
 import type { Notification } from "./types";
 
 // Socket.IO shares the API's HTTP server at its root, not under /api/v1 (architecture doc §01/§12).
-const SOCKET_ORIGIN = new URL(API_URL).origin;
+const SOCKET_ORIGIN = new URL(API_URL, window.location.origin).origin;
 
 let socket: Socket | null = null;
 
