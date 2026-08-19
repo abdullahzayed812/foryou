@@ -9,9 +9,9 @@ const ROLE_ICONS: Record<MarketplaceRole, string> = {
 };
 // TODO: replace with the real community links.
 const ROLE_TELEGRAM_LINKS: Record<MarketplaceRole, string> = {
-  customer: "https://t.me/foryou_customers",
-  seller: "https://t.me/foryou_sellers",
-  merchant: "https://t.me/foryou_merchants",
+  customer: "https://t.me/ForYOU_platform",
+  seller: "https://t.me/ForYOU_platform",
+  merchant: "https://t.me/ForYOU_platform",
 };
 const ROLES: MarketplaceRole[] = ["customer", "seller", "merchant"];
 

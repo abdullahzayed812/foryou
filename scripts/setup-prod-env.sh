@@ -2,14 +2,16 @@
 # Run this ONCE on the deploy host (the VPS), from the repo root:
 #   ./scripts/setup-prod-env.sh
 #
-# Copies .env.production.example to .env and fills in POSTGRES_PASSWORD,
-# JWT_ACCESS_SECRET, JWT_REFRESH_SECRET (and DATABASE_URL to match) with
-# freshly generated random secrets — these must never be committed to git,
-# so they can't live in the example file itself, only be generated here.
+# Copies .env.production.example to .env, prompts for your domain (fills in
+# DOMAIN/APP_URL/WEB_URL consistently so they can't drift out of sync — see
+# .env.production.example's comments for why there are three), and fills in
+# POSTGRES_PASSWORD, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET (and DATABASE_URL
+# to match) with freshly generated random secrets — these must never be
+# committed to git, so they can't live in the example file itself, only be
+# generated here.
 #
-# Everything else in .env.production.example already targets citymarket.tech
-# correctly (APP_URL/WEB_URL/VITE_API_URL) and needs no edits. What's left
-# for you to fill in by hand afterward:
+# What's left for you to fill in by hand afterward:
+#   - CERTBOT_EMAIL (required before running scripts/init-letsencrypt.sh)
 #   - S3_ENDPOINT / S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY / MEDIA_PUBLIC_BASE_URL
 #     (Cloudflare R2 — required for product/verification image uploads to work)
 #   - SMTP_HOST/PORT/USER/PASS (optional — email sending no-ops without it)
@@ -33,6 +35,17 @@ set_var() {
   mv .env.tmp .env
 }
 
+if [[ -t 0 ]]; then
+  read -rp "Domain (must already point at this VPS, e.g. foryou.example.com): " domain
+  if [[ -n "$domain" ]]; then
+    set_var DOMAIN "$domain"
+    set_var APP_URL "https://$domain"
+    set_var WEB_URL "https://$domain"
+  fi
+else
+  echo "Non-interactive run — leaving DOMAIN/APP_URL/WEB_URL as placeholders; edit .env by hand." >&2
+fi
+
 postgres_password="$(openssl rand -hex 24)"
 jwt_access_secret="$(openssl rand -base64 48 | tr -d '\n')"
 jwt_refresh_secret="$(openssl rand -base64 48 | tr -d '\n')"
@@ -40,14 +53,16 @@ jwt_refresh_secret="$(openssl rand -base64 48 | tr -d '\n')"
 set_var POSTGRES_PASSWORD "$postgres_password"
 set_var JWT_ACCESS_SECRET "$jwt_access_secret"
 set_var JWT_REFRESH_SECRET "$jwt_refresh_secret"
-set_var DATABASE_URL "postgres://$(get_var POSTGRES_USER):${postgres_password}@foryou-postgres:5432/$(get_var POSTGRES_DB)"
+set_var DATABASE_URL "postgres://$(get_var POSTGRES_USER):${postgres_password}@postgres:5432/$(get_var POSTGRES_DB)"
 
 chmod 600 .env
 
-cat <<'EOF'
+cat <<EOF
 .env created with fresh POSTGRES_PASSWORD / JWT_ACCESS_SECRET / JWT_REFRESH_SECRET.
+Domain: $(get_var DOMAIN)
 
-Still needed before `docker compose -f docker-compose.prod.yml up -d --build`:
+Still needed before \`docker compose -f docker-compose.prod.yml up -d --build\`:
+  - CERTBOT_EMAIL (needed before scripts/init-letsencrypt.sh)
   - Cloudflare R2: S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, MEDIA_PUBLIC_BASE_URL
   - (optional, can add later) SMTP_*, PAYMOB_*, SENTRY_DSN
 

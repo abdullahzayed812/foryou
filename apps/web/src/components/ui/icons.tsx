@@ -148,3 +148,11 @@ export function CoinIcon(props: SVGProps<SVGSVGElement>) {
     </Icon>
   );
 }
+
+export function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path d="M22 16.92v2.08a2 2 0 0 1-2 2 17.5 17.5 0 0 1-15.5-15.5 2 2 0 0 1 2-2h2.08a1 1 0 0 1 1 .86l.39 2.5a1 1 0 0 1-.54 1.05l-1.54.77a14 14 0 0 0 5.5 5.5l.77-1.54a1 1 0 0 1 1.05-.54l2.5.39a1 1 0 0 1 .86 1z" />
+    </Icon>
+  );
+}

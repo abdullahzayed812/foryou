@@ -30,8 +30,9 @@ docker-compose.dev.yml    Local dev infra: Postgres, Redis, MinIO (R2-compatible
 docker-compose.prod.yml   Production stack: Postgres, Redis, api, worker, web (Nginx), a one-shot migrate job
 apps/api/Dockerfile       Multi-stage prod image — also runs the worker (different CMD, see compose)
 apps/web/Dockerfile       Multi-stage prod image — vite build served by Nginx
-docker/nginx/web.conf     Nginx config baked into the web image (serves the SPA only)
+docker/nginx/web.conf     Nginx config template baked into the web image — TLS, SPA, proxies /api/v1 + /socket.io
 scripts/setup-prod-env.sh Generates .env from .env.production.example with fresh secrets (run on the VPS)
+scripts/init-letsencrypt.sh One-time bootstrap for the first real Let's Encrypt cert (run on the VPS)
 .github/workflows/        CI (lint/typecheck/test/build) + CD (build & push images to GHCR on main)
 ```
 
@@ -112,39 +113,34 @@ Production is a self-hosted Docker stack (`docker-compose.prod.yml`) — swap
 `postgres`/`redis` for managed services by pointing `DATABASE_URL`/`REDIS_URL`
 at them and dropping those two services; nothing else changes.
 
-`web` and `api` are split across two public subdomains (`foryou.citymarket.tech`,
-`api.foryou.citymarket.tech`) rather than sharing one origin. This VPS is
-shared with other apps under citymarket.tech that already have their own
-Nginx gateway permanently bound to the public 80/443 (project `citymarket` at
-`/opt/citymarket`, container `citymarket-nginx-1`), so this project runs no
-Nginx/certbot of its own — `web`/`api` publish no host ports at all and
-instead join that other project's Docker network (`citymarket_citymarket`,
-declared `external: true`) so its gateway can reverse-proxy to them by
-container name, the same way it already does for its own dashboards. The
-routing (two more server blocks) and TLS (the existing citymarket.tech
-certificate, `--expand`ed to cover these two extra names) both live in that
-other project — see its `DEPLOYMENT.md` and `nginx/nginx.ssl.conf`, not
-anything in this repo. The browser talks to `api.foryou.citymarket.tech`
-directly (`VITE_API_URL`), so CORS (`WEB_URL` → `allowedOrigins`,
-`apps/api/src/config/env.ts`) is what keeps that origin split safe rather
-than same-origin proxying.
+This targets a VPS dedicated to this app alone (`web` binds host 80/443
+directly) — if it ever needs to share a host with another app that already
+owns those ports, that's a different setup and needs rethinking, not this
+one as-is. Single-origin: one domain for everything, `web`'s own Nginx
+(`docker/nginx/web.conf`) terminates TLS and reverse-proxies `/api/v1` +
+`/socket.io` to `api` internally, so the browser only ever talks to one
+hostname — no CORS needed. TLS comes from a `certbot` service that shares a
+volume with `web` and renews the cert every 12h.
 
 ```bash
-./scripts/setup-prod-env.sh   # copies .env.production.example → .env, generates
-                               # POSTGRES_PASSWORD/JWT secrets — never commit .env
-nano .env                     # fill in the Cloudflare R2 (S3_*) vars it flags,
-                               # plus SMTP_*/PAYMOB_*/SENTRY_DSN when ready
+# DNS: point an A record for your domain at this VPS's IP first.
+./scripts/setup-prod-env.sh   # copies .env.production.example → .env, prompts
+                               # for your domain, generates POSTGRES_PASSWORD/JWT
+                               # secrets — never commit .env
+nano .env                     # fill in CERTBOT_EMAIL + the Cloudflare R2 (S3_*)
+                               # vars it flags, plus SMTP_*/PAYMOB_*/SENTRY_DSN
 docker compose -f docker-compose.prod.yml up -d --build
+./scripts/init-letsencrypt.sh  # one-time: issues the real TLS cert
 ```
 
 This builds the `api`/`worker` image once (`apps/api/Dockerfile` — same image,
 different `command:` per service), runs `migrate` to completion before `api`/
 `worker` start (`depends_on: condition: service_completed_successfully`), and
-builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx). Every
-long-running service has a Docker `HEALTHCHECK` against `/healthz` (liveness)
-or `/readyz` (readiness — checks DB + Redis). `docker network create
-citymarket_citymarket` only if `/opt/citymarket`'s own stack has never been
-started on this host — normally it already exists.
+builds `web` (`apps/web/Dockerfile` — a Vite build served by Nginx; `${DOMAIN}`
+in its config is filled in at container *start*, not build time, via nginx's
+built-in envsubst-on-templates mechanism). Every long-running service has a
+Docker `HEALTHCHECK` against `/healthz` (liveness) or `/readyz` (readiness —
+checks DB + Redis).
 
 **Redeploying**:
 

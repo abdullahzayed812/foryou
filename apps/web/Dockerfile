@@ -22,11 +22,15 @@ ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build -w packages/shared && npm run build -w apps/web
 
 FROM nginx:1.27-alpine AS runtime
-COPY docker/nginx/web.conf /etc/nginx/conf.d/default.conf
+# `${DOMAIN}` in web.conf is substituted at container *start* (not here at
+# build time) by nginx's built-in entrypoint envsubst-on-templates step —
+# templates/ + .template suffix opts into that automatically, no custom
+# entrypoint needed. See docker-compose.prod.yml for where DOMAIN comes from.
+COPY docker/nginx/web.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 80 443
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost/ >/dev/null || exit 1
+  CMD wget -qO- http://localhost/nginx-health >/dev/null || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

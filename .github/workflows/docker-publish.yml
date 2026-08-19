@@ -54,7 +54,7 @@ jobs:
           file: apps/web/Dockerfile
           push: true
           build-args: |
-            VITE_API_URL=https://api.foryou.citymarket.tech/api/v1
+            VITE_API_URL=/api/v1
           tags: |
             ${{ env.WEB_IMAGE }}:latest
             ${{ env.WEB_IMAGE }}:${{ github.event.workflow_run.head_sha }}

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { MarketplaceRole } from "@foryou/shared";
 import "@fontsource/cairo/600.css";
@@ -21,6 +20,7 @@ import { BenefitsSection } from "../components/BenefitsSection";
 import { ExpressSection } from "../components/ExpressSection";
 import { GetStartedSection } from "../components/GetStartedSection";
 import { FaqSection } from "../components/FaqSection";
+import { WhatsAppIcon } from "@/components/ui/icons";
 
 const PARTICLE_COUNT = 18;
 
@@ -87,17 +87,17 @@ export function LandingPage() {
             {t("common.appName")}
           </div>
           <div className="lp-nav-actions">
-            <Link to="/login" className="lp-nav-link">
+            {/* <Link to="/login" className="lp-nav-link">
               {t("landing.nav.signIn")}
-            </Link>
+            </Link> */}
             <LanguageSwitcher />
-            <button
+            {/* <button
               type="button"
               className="lp-nav-btn"
               onClick={() => scrollToId("lp-get-started")}
             >
               {t("landing.hero.cta")}
-            </button>
+            </button> */}
           </div>
         </nav>
 
@@ -108,19 +108,29 @@ export function LandingPage() {
             <h1>{t("landing.hero.title")}</h1>
             <p className="lp-sub">{t("landing.hero.subtitle")}</p>
             <div className="lp-btn-row">
-              <button
+              {/* <button
                 type="button"
                 className="lp-btn-primary"
                 onClick={() => scrollToId("lp-role-select")}
               >
                 {t("landing.hero.cta")}
-              </button>
+              </button> */}
             </div>
             <button type="button" className="lp-link-more" onClick={() => scrollToId("lp-steps")}>
               {t("landing.nav.learnMore")} ↓
             </button>
           </div>
         </section>
+
+        {/* WhatsApp Floating Button */}
+        <a
+          href="https://wa.me/201104198388"
+          className="lp-whatsapp-float"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <WhatsAppIcon />
+        </a>
 
         <RoleSelectSection selectedRole={role} onSelectRole={setRole} />
         <StepsSection role={role} />
@@ -132,13 +142,13 @@ export function LandingPage() {
 
         <section className="lp-final-cta">
           <h2>{t("landing.finalCta.title")}</h2>
-          <button
+          {/* <button
             type="button"
             className="lp-btn-primary"
             onClick={() => scrollToId("lp-get-started")}
           >
             🚀 {t("landing.hero.cta")}
-          </button>
+          </button> */}
         </section>
 
         <footer className="lp-footer">{t("landing.footer")}</footer>

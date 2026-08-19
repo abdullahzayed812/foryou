@@ -37,9 +37,9 @@ export function GetStartedSection({ role, onSelectRole }: GetStartedSectionProps
           ))}
         </div>
 
-        <Link to={`/register/${role}`} className="lp-btn-primary">
+        {/* <Link to={`/register/${role}`} className="lp-btn-primary">
           {t("landing.getStarted.cta")}
-        </Link>
+        </Link> */}
 
         <p className="lp-get-started-signin">
           {t("landing.alreadyHaveAccount")} <Link to="/login">{t("landing.signIn")}</Link>
