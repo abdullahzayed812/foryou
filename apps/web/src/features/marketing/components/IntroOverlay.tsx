@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import "./IntroOverlay.css";
 
 const REGIONS = [
   { name: "china", x: 830, y: 150 },
@@ -33,8 +34,7 @@ interface IntroOverlayProps {
 export function IntroOverlay({ onComplete }: IntroOverlayProps) {
   const { t } = useTranslation();
   const logoSceneRef = useRef<HTMLDivElement>(null);
-  const logoPathRef = useRef<SVGPathElement>(null);
-  const logoPlaneRef = useRef<SVGTextElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const mapSceneRef = useRef<HTMLDivElement>(null);
   const worldSvgRef = useRef<SVGSVGElement>(null);
   const captionRef = useRef<HTMLDivElement>(null);
@@ -94,9 +94,9 @@ export function IntroOverlay({ onComplete }: IntroOverlayProps) {
       const egyptG = document.createElementNS(ns, "g");
       egyptG.setAttribute("class", "lp-map-node lp-egypt lp-show");
       egyptG.innerHTML = `
-        <circle class="lp-egypt-pulse" cx="${EGYPT.x}" cy="${EGYPT.y}" r="10" fill="none" stroke="#E8A33D" stroke-width="2"></circle>
-        <circle class="lp-dot" cx="${EGYPT.x}" cy="${EGYPT.y}" r="7"></circle>
-        <text x="${EGYPT.x + 14}" y="${EGYPT.y + 4}">${tRef.current("landing.intro.egypt")}</text>
+        <circle class="lp-egypt-pulse" cx="${EGYPT.x}" cy="${EGYPT.y}" r="14" fill="none" stroke="#E8A33D" stroke-width="3"></circle>
+        <circle class="lp-dot" cx="${EGYPT.x}" cy="${EGYPT.y}" r="10"></circle>
+        <text class="lp-egypt-label" x="${EGYPT.x + 18}" y="${EGYPT.y + 6}">${tRef.current("landing.intro.egypt")}</text>
       `;
       svg.appendChild(egyptG);
 
@@ -105,7 +105,25 @@ export function IntroOverlay({ onComplete }: IntroOverlayProps) {
         g.setAttribute("class", "lp-map-node");
         g.setAttribute("id", `lp-node-${region.name}`);
         const regionLabel = tRef.current(`landing.intro.regionLabels.${region.name}`);
-        g.innerHTML = `<circle class="lp-dot" cx="${region.x}" cy="${region.y}" r="6"></circle><text x="${region.x + 12}" y="${region.y + 4}">${regionLabel}</text>`;
+        g.innerHTML = `
+          <circle
+            class="lp-dot"
+            cx="${region.x}"
+            cy="${region.y}"
+            r="10"
+          ></circle>
+
+          <text
+            class="lp-region-label"
+            x="${region.x}"
+            y="${region.y - 24}"
+            text-anchor="middle"
+            font-size="28"
+            font-weight="700"
+          >
+            ${regionLabel}
+          </text>
+        `;
         svg.appendChild(g);
 
         const d = curvePath(region, EGYPT);
@@ -120,7 +138,7 @@ export function IntroOverlay({ onComplete }: IntroOverlayProps) {
         const plane = document.createElementNS(ns, "text");
         plane.setAttribute("class", "lp-route-plane");
         plane.setAttribute("id", `lp-plane-${region.name}`);
-        plane.setAttribute("font-size", "16");
+        plane.setAttribute("font-size", "26");
         plane.textContent = "✈️";
         plane.style.offsetPath = `path('${d}')`;
         svg.appendChild(plane);
@@ -170,15 +188,27 @@ export function IntroOverlay({ onComplete }: IntroOverlayProps) {
       }
 
       logoSceneRef.current?.classList.add("lp-show");
-      await sleep(700);
-      if (stopped()) return;
 
-      logoPathRef.current?.classList.add("lp-draw");
-      await sleep(600);
-      if (stopped()) return;
+      const v = videoRef.current;
+      if (v) {
+        v.currentTime = 0;
+        await v.play().catch(() => {});
+        await new Promise<void>((resolve) => {
+          let ended = false;
+          const end = () => {
+            if (!ended) {
+              ended = true;
+              resolve();
+            }
+          };
+          v.onended = end;
+          v.addEventListener("error", end); // in case video fails to load
+          setTimeout(end, 10000); // 10s fallback
+        });
+      } else {
+        await sleep(3000);
+      }
 
-      logoPlaneRef.current?.classList.add("lp-fly");
-      await sleep(1800);
       if (stopped()) return;
 
       logoSceneRef.current?.classList.add("lp-fade-out");
@@ -223,16 +253,15 @@ export function IntroOverlay({ onComplete }: IntroOverlayProps) {
         {t("landing.intro.skip")}
       </button>
       <div className="lp-intro-stage">
-        <div ref={logoSceneRef} className="lp-logo-scene">
-          <svg className="lp-logo-mark" viewBox="0 0 150 150">
-            <path ref={logoPathRef} className="lp-dotted-path" d="M30,95 C55,40 100,30 125,55" />
-            <text ref={logoPlaneRef} className="lp-logo-plane" x="0" y="6" fontSize="20">
-              ✈️
-            </text>
-          </svg>
-          <div className="lp-logo-wordmark">
-            For<span style={{ color: "var(--lp-accent)" }}>You</span>
-          </div>
+        <div ref={logoSceneRef} className="lp-logo-scene" style={{ backgroundColor: "#00292d" }}>
+          <video
+            ref={videoRef}
+            src="/intro.mp4"
+            className="lp-intro-video"
+            playsInline
+            muted
+            style={{ width: "90%", maxWidth: "400px", borderRadius: "16px" }}
+          />
         </div>
 
         <div ref={mapSceneRef} className="lp-map-scene">

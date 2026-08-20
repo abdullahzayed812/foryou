@@ -83,8 +83,7 @@ export function LandingPage() {
       <div className={`lp-main ${introDone ? "lp-show" : ""}`}>
         <nav className="lp-nav">
           <div className="lp-logo-small">
-            <span className="lp-dot" aria-hidden="true" />
-            {t("common.appName")}
+            <img src="/logo.svg" alt={t("common.appName")} style={{ height: "72px", width: "auto" }} />
           </div>
           <div className="lp-nav-actions">
             {/* <Link to="/login" className="lp-nav-link">
@@ -137,18 +136,49 @@ export function LandingPage() {
         <CompareSection />
         <BenefitsSection role={role} />
         <ExpressSection />
-        <GetStartedSection role={role} onSelectRole={setRole} />
+        <GetStartedSection />
         <FaqSection />
 
-        <section className="lp-final-cta">
-          <h2>{t("landing.finalCta.title")}</h2>
-          {/* <button
+        {/* <section className="lp-final-cta"> */}
+        {/* <h2>{t("landing.finalCta.title")}</h2> */}
+        {/* <button
             type="button"
             className="lp-btn-primary"
             onClick={() => scrollToId("lp-get-started")}
           >
             🚀 {t("landing.hero.cta")}
           </button> */}
+        {/* </section> */}
+
+        <section className="lp-whatsapp-cta" style={{ textAlign: "center", padding: "60px 24px" }}>
+          <a
+            href="https://wa.me/201104198388"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "12px",
+              fontSize: "18px",
+              fontWeight: "700",
+              color: "var(--lp-primary)",
+              textDecoration: "none"
+            }}
+          >
+            {t("landing.whatsappQuestions")}
+            <div style={{
+              width: "48px",
+              height: "48px",
+              borderRadius: "50%",
+              backgroundColor: "#25d366",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(37, 211, 102, 0.4)"
+            }}>
+              <WhatsAppIcon style={{ stroke: "white", fill: "none", width: "24px", height: "24px" }} />
+            </div>
+          </a>
         </section>
 
         <footer className="lp-footer">{t("landing.footer")}</footer>

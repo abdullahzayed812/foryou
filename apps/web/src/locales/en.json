@@ -695,6 +695,7 @@
       "signIn": "Sign in",
       "learnMore": "Learn more"
     },
+    "whatsappQuestions": "If you still have any questions, send us on WhatsApp",
     "hero": {
       "eyebrow": "Coming soon",
       "title": "The whole world, in one place.",
@@ -778,22 +779,58 @@
     "benefits": {
       "title": "Why FOR YOU?",
       "customer": [
-        { "icon": "💰", "label": "Best price" },
-        { "icon": "🛡️", "label": "Trusted sellers" },
-        { "icon": "⚖️", "label": "Easy comparison" },
-        { "icon": "🌍", "label": "Any store worldwide" }
+        {
+          "icon": "💰",
+          "label": "Best price"
+        },
+        {
+          "icon": "🛡️",
+          "label": "Trusted sellers"
+        },
+        {
+          "icon": "⚖️",
+          "label": "Easy comparison"
+        },
+        {
+          "icon": "🌍",
+          "label": "Any store worldwide"
+        }
       ],
       "seller": [
-        { "icon": "📦", "label": "Ready requests" },
-        { "icon": "📈", "label": "Sell more" },
-        { "icon": "🎛️", "label": "Full control" },
-        { "icon": "⚡", "label": "FOR YOU EXPRESS" }
+        {
+          "icon": "📦",
+          "label": "Ready requests"
+        },
+        {
+          "icon": "📈",
+          "label": "Sell more"
+        },
+        {
+          "icon": "🎛️",
+          "label": "Full control"
+        },
+        {
+          "icon": "⚡",
+          "label": "FOR YOU EXPRESS"
+        }
       ],
       "merchant": [
-        { "icon": "🏪", "label": "Showcase your stock" },
-        { "icon": "🔎", "label": "Get discovered" },
-        { "icon": "🛡️", "label": "Verified trust" },
-        { "icon": "🚀", "label": "Grow faster" }
+        {
+          "icon": "🏪",
+          "label": "Showcase your stock"
+        },
+        {
+          "icon": "🔎",
+          "label": "Get discovered"
+        },
+        {
+          "icon": "🛡️",
+          "label": "Verified trust"
+        },
+        {
+          "icon": "🚀",
+          "label": "Grow faster"
+        }
       ]
     },
     "compare": {
@@ -809,9 +846,19 @@
         "Shipping calculator: maybe around 1,450 EGP?"
       ],
       "offers": [
-        { "label": "Verified seller ★4.9", "price": "2,100 EGP" },
-        { "label": "Delivery in 5 days", "price": "1,950 EGP" },
-        { "label": "✓ Best — fast delivery", "price": "1,880 EGP", "best": true }
+        {
+          "label": "Verified seller ★4.9",
+          "price": "2,100 EGP"
+        },
+        {
+          "label": "Delivery in 5 days",
+          "price": "1,950 EGP"
+        },
+        {
+          "label": "✓ Best — fast delivery",
+          "price": "1,880 EGP",
+          "best": true
+        }
       ],
       "taglineStart": "Instead of searching dozens of sellers... ",
       "taglineEmphasis": "let sellers compete for you."
