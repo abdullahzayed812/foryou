@@ -1048,6 +1048,113 @@
   margin: 0 0 26px;
 }
 
+/* --- get-started carousel ---
+   Pinned to `direction: ltr` on purpose: the slide offsets are computed as
+   physical translateX(index * -100%), so the track must lay out its slides
+   left-to-right regardless of the page's dir="rtl" (Arabic) — otherwise the
+   flex order and the transform math fight each other and slides jump the
+   wrong way. */
+.lp-carousel {
+  position: relative;
+  direction: ltr;
+  max-width: 900px;
+  margin-inline: auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--lp-shadow-lg);
+}
+
+.lp-carousel-viewport {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.lp-carousel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.lp-carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: clamp(340px, 58vw, 620px);
+  object-fit: contain;
+  background: var(--lp-primary);
+  display: block;
+}
+
+.lp-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(251, 249, 244, 0.9);
+  color: var(--lp-primary);
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--lp-shadow-sm);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lp-carousel-arrow:hover {
+  background: var(--lp-bg);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.lp-carousel-arrow-prev {
+  left: 16px;
+}
+
+.lp-carousel-arrow-next {
+  right: 16px;
+}
+
+.lp-carousel-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lp-carousel-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(251, 249, 244, 0.55);
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease, transform 0.3s ease;
+}
+
+.lp-carousel-dot:hover {
+  background: rgba(251, 249, 244, 0.85);
+}
+
+.lp-carousel-dot-active {
+  width: 26px;
+  border-radius: 5px;
+  background: var(--lp-bg);
+}
+
+@media (max-width: 640px) {
+  .lp-carousel-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+}
+
 .lp-role-toggle-row {
   display: flex;
   gap: 10px;
@@ -1176,6 +1283,51 @@
   color: var(--lp-text-soft);
   font-size: 13px;
   border-top: 1px solid var(--lp-border);
+}
+
+.lp-social-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lp-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--lp-border);
+  color: var(--lp-text-soft);
+  transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.lp-social-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+.lp-social-link:hover {
+  transform: translateY(-2px);
+  border-color: currentColor;
+}
+
+.lp-social-link.lp-social-facebook:hover {
+  color: #1877f2;
+}
+
+.lp-social-link.lp-social-instagram:hover {
+  color: #e4405f;
+}
+
+.lp-social-link.lp-social-telegram:hover {
+  color: #26a5e4;
+}
+
+.lp-social-link.lp-social-email:hover {
+  color: var(--lp-primary);
 }
 
 /* WhatsApp Floating Button */

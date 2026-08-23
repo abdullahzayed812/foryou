@@ -20,7 +20,7 @@ import { BenefitsSection } from "../components/BenefitsSection";
 import { ExpressSection } from "../components/ExpressSection";
 import { GetStartedSection } from "../components/GetStartedSection";
 import { FaqSection } from "../components/FaqSection";
-import { WhatsAppIcon } from "@/components/ui/icons";
+import { WhatsAppIcon, FacebookIcon, InstagramIcon, TelegramIcon, MailIcon } from "@/components/ui/icons";
 
 const PARTICLE_COUNT = 18;
 
@@ -181,7 +181,45 @@ export function LandingPage() {
           </a>
         </section>
 
-        <footer className="lp-footer">{t("landing.footer")}</footer>
+        <footer className="lp-footer">
+          <div className="lp-social-links">
+            <a
+              href="https://www.facebook.com/share/185ijDfRxz/"
+              className="lp-social-link lp-social-facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <FacebookIcon />
+            </a>
+            <a
+              href="https://www.instagram.com/for_you2_online?igsi=MWN1bXE1bWp1cm1qcA=="
+              className="lp-social-link lp-social-instagram"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <InstagramIcon />
+            </a>
+            <a
+              href="https://t.me/ForYOU_platform"
+              className="lp-social-link lp-social-telegram"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Telegram"
+            >
+              <TelegramIcon />
+            </a>
+            <a
+              href="mailto:foryou2.online@gmail.com"
+              className="lp-social-link lp-social-email"
+              aria-label="Email"
+            >
+              <MailIcon />
+            </a>
+          </div>
+          {t("landing.footer")}
+        </footer>
       </div>
     </div>
   );
