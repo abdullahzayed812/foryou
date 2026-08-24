@@ -17,6 +17,7 @@ import { RoleSelectSection } from "../components/RoleSelectSection";
 import { StepsSection } from "../components/StepsSection";
 import { CompareSection } from "../components/CompareSection";
 import { BenefitsSection } from "../components/BenefitsSection";
+import { WantedSection } from "../components/WantedSection";
 import { ExpressSection } from "../components/ExpressSection";
 import { GetStartedSection } from "../components/GetStartedSection";
 import { FaqSection } from "../components/FaqSection";
@@ -135,6 +136,7 @@ export function LandingPage() {
         <StepsSection role={role} />
         <CompareSection />
         <BenefitsSection role={role} />
+        <WantedSection />
         <ExpressSection />
         <GetStartedSection />
         <FaqSection />

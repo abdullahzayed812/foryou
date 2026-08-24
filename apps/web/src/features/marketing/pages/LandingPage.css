@@ -456,7 +456,6 @@
 }
 
 @keyframes lp-floaty {
-
   0%,
   100% {
     transform: translateY(0);
@@ -665,7 +664,7 @@
   grid-template-rows: 1fr;
 }
 
-.lp-role-card-panel>div {
+.lp-role-card-panel > div {
   overflow: hidden;
 }
 
@@ -986,6 +985,40 @@
   margin: 0;
 }
 
+/* --- wanted --- */
+.lp-wanted-section {
+  padding: 90px 24px;
+  text-align: center;
+}
+
+.lp-wanted-inner {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.lp-wanted-badge {
+  display: inline-block;
+  background: var(--lp-primary);
+  color: var(--lp-accent);
+  font-weight: 800;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.lp-wanted-inner h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--lp-primary);
+  margin-bottom: 16px;
+}
+
+.lp-wanted-inner p {
+  color: var(--lp-text-soft);
+  font-size: 16px;
+  margin: 0;
+}
+
 /* --- express --- */
 .lp-express-section {
   padding: 90px 24px;
@@ -1059,6 +1092,10 @@
   direction: ltr;
   max-width: 900px;
   margin-inline: auto;
+}
+
+.lp-carousel-box {
+  position: relative;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--lp-shadow-lg);
@@ -1100,7 +1137,9 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: var(--lp-shadow-sm);
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .lp-carousel-arrow:hover {
@@ -1117,13 +1156,10 @@
 }
 
 .lp-carousel-dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 18px;
   display: flex;
   justify-content: center;
   gap: 10px;
+  margin-top: 16px;
 }
 
 .lp-carousel-dot {
@@ -1132,13 +1168,16 @@
   border-radius: 50%;
   border: none;
   padding: 0;
-  background: rgba(251, 249, 244, 0.55);
+  background: rgba(251, 249, 244, 0.35);
   cursor: pointer;
-  transition: width 0.3s ease, background 0.3s ease, transform 0.3s ease;
+  transition:
+    width 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease;
 }
 
 .lp-carousel-dot:hover {
-  background: rgba(251, 249, 244, 0.85);
+  background: rgba(251, 249, 244, 0.6);
 }
 
 .lp-carousel-dot-active {
@@ -1250,7 +1289,7 @@
   grid-template-rows: 1fr;
 }
 
-.lp-faq-a>div {
+.lp-faq-a > div {
   overflow: hidden;
 }
 
@@ -1301,7 +1340,10 @@
   border-radius: 50%;
   border: 1px solid var(--lp-border);
   color: var(--lp-text-soft);
-  transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .lp-social-link svg {

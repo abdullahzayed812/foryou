@@ -863,6 +863,11 @@
       "taglineStart": "Instead of searching dozens of sellers... ",
       "taglineEmphasis": "let sellers compete for you."
     },
+    "wanted": {
+      "badge": "🔍 FOR YOU WANTED",
+      "title": "Know what's wanted before you import 🔍",
+      "body": "Discover what customers are actually asking for, and get a clearer picture of market needs before you import."
+    },
     "express": {
       "badge": "⚡ FOR YOU EXPRESS",
       "title": "Have ready-to-ship products?",

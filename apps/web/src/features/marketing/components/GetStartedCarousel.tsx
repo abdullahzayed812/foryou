@@ -32,47 +32,57 @@ export function GetStartedCarousel() {
     }
   }, [index]);
 
+  useEffect(() => {
+    const delay = SLIDES[index]?.type === "video" ? 37_000 : 10_000;
+    const id = setTimeout(() => {
+      setIndex((i) => (i + 1) % SLIDES.length);
+    }, delay);
+    return () => clearTimeout(id);
+  }, [index]);
+
   return (
     <div className="lp-carousel">
-      <div className="lp-carousel-viewport">
-        <div
-          className="lp-carousel-track"
-          style={{ transform: `translateX(${index * -100}%)` }}
-        >
-          {SLIDES.map((slide) =>
-            slide.type === "video" ? (
-              <video
-                key={slide.src}
-                ref={videoRef}
-                src={slide.src}
-                className="lp-carousel-slide"
-                controls
-                loop
-                playsInline
-              />
-            ) : (
-              <img key={slide.src} src={slide.src} className="lp-carousel-slide" alt="" />
-            ),
-          )}
+      <div className="lp-carousel-box">
+        <div className="lp-carousel-viewport">
+          <div
+            className="lp-carousel-track"
+            style={{ transform: `translateX(${index * -100}%)` }}
+          >
+            {SLIDES.map((slide) =>
+              slide.type === "video" ? (
+                <video
+                  key={slide.src}
+                  ref={videoRef}
+                  src={slide.src}
+                  className="lp-carousel-slide"
+                  controls
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img key={slide.src} src={slide.src} className="lp-carousel-slide" alt="" />
+              ),
+            )}
+          </div>
         </div>
-      </div>
 
-      <button
-        type="button"
-        className="lp-carousel-arrow lp-carousel-arrow-prev"
-        onClick={prev}
-        aria-label="Previous slide"
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        className="lp-carousel-arrow lp-carousel-arrow-next"
-        onClick={next}
-        aria-label="Next slide"
-      >
-        ›
-      </button>
+        <button
+          type="button"
+          className="lp-carousel-arrow lp-carousel-arrow-prev"
+          onClick={prev}
+          aria-label="Previous slide"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          className="lp-carousel-arrow lp-carousel-arrow-next"
+          onClick={next}
+          aria-label="Next slide"
+        >
+          ›
+        </button>
+      </div>
 
       <div className="lp-carousel-dots">
         {SLIDES.map((slide, i) => (
