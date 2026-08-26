@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@fontsource-variable/plus-jakarta-sans";
 @import "@fontsource-variable/bricolage-grotesque";
+@import "./features/marketing/pages/LandingPage.css";
 
 @theme {
   --font-sans:
