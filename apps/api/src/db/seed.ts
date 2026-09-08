@@ -84,9 +84,14 @@ async function createUser(email: string, role: Role) {
 }
 
 async function main() {
-  if (isProd) {
+  // These are publicly-known demo credentials (see LoginPage.tsx's dev
+  // quick-login buttons), so seeding a real production DB is refused by
+  // default. A throwaway demo/staging box that deliberately wants them can
+  // opt in with ALLOW_PROD_SEED=1 — this keeps NODE_ENV=production, so the
+  // prod image's logger doesn't try to load the pruned pino-pretty devDep.
+  if (isProd && process.env.ALLOW_PROD_SEED !== "1") {
     throw new Error(
-      "db:seed refuses to run with NODE_ENV=production — these are publicly-known demo credentials (see LoginPage.tsx's dev quick-login buttons).",
+      "db:seed refuses to run with NODE_ENV=production. If this is a demo box and you really want the public demo accounts, re-run with ALLOW_PROD_SEED=1.",
     );
   }
 
