@@ -14,6 +14,7 @@ import {
   type ProductsRepository,
   type ProductImageInput,
 } from "./repository.js";
+import { wantedService } from "../wanted/service.js";
 import "./events.js";
 
 export interface ImageWithMediaAsset {
@@ -99,6 +100,13 @@ export class ProductsService {
       productId: product.id,
       ownerId,
     });
+
+    // Opt-in: list straight into a WANTED cycle instead of buyable EXPRESS
+    // stock. Keeps the same product id — this only flips lifecycle/status.
+    if (input.startAsWanted) {
+      await wantedService.startWantedForNewProduct(product.id);
+    }
+
     const created = await this.repo.findById(product.id);
     return created && withImageUrls(created);
   }
@@ -115,7 +123,13 @@ export class ProductsService {
 
     const nextQuantity = input.availableQuantity ?? existing.availableQuantity;
     const nextComingSoon = input.isComingSoon ?? existing.status === "coming_soon";
-    const status = deriveProductStatus(nextQuantity, nextComingSoon);
+    // A product mid-WANTED (or importing) is never buyable regardless of what
+    // the edit form sends — the WANTED lifecycle owns its status until an
+    // import completes and flips it back to EXPRESS.
+    const status =
+      existing.lifecycle === "express"
+        ? deriveProductStatus(nextQuantity, nextComingSoon)
+        : "coming_soon";
 
     const updated = await this.repo.update(productId, {
       ...input,

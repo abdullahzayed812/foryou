@@ -80,9 +80,13 @@ export function OwnerProductsListPage({
                       <span className="text-base font-bold text-neutral-900">
                         {Number(product.price).toFixed(2)} {t("common.egp")}
                       </span>
-                      <Badge tone={STATUS_TONE[product.status]}>
-                        {t(`productStatus.${product.status}`)}
-                      </Badge>
+                      {product.lifecycle === "express" ? (
+                        <Badge tone={STATUS_TONE[product.status]}>
+                          {t(`productStatus.${product.status}`)}
+                        </Badge>
+                      ) : (
+                        <Badge tone="brand">{t(`wanted.lifecycle.${product.lifecycle}`)}</Badge>
+                      )}
                     </div>
                   </div>
                 </div>

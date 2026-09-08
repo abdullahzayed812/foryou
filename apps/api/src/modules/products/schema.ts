@@ -27,6 +27,19 @@ export const productStatusEnum = pgEnum("product_status", [
   "coming_soon",
 ]);
 
+/**
+ * FOR YOU product lifecycle stage (WANTED → IMPORTING → EXPRESS). Distinct
+ * from `status` above, which stays the quantity-driven stock indicator:
+ * "OUT OF STOCK" in the lifecycle sense is just `lifecycle = 'express'` with
+ * `status = 'out_of_stock'`. The id never changes across stages or across
+ * repeated WANTED cycles (see modules/wanted/schema.ts).
+ */
+export const productLifecycleEnum = pgEnum("product_lifecycle", [
+  "wanted",
+  "importing",
+  "express",
+]);
+
 export const productModerationStatusEnum = pgEnum("product_moderation_status", [
   "published",
   "pending_review",
@@ -65,6 +78,7 @@ export const products = pgTable(
     shippingCost: numeric("shipping_cost", { precision: 10, scale: 2 }).notNull().default("0"),
     availableQuantity: integer("available_quantity").notNull().default(0),
     status: productStatusEnum("status").notNull().default("coming_soon"),
+    lifecycle: productLifecycleEnum("lifecycle").notNull().default("express"),
     warrantyAvailable: boolean("warranty_available").notNull().default(false),
     videoMediaAssetId: uuid("video_media_asset_id").references(() => mediaAssets.id),
     moderationStatus: productModerationStatusEnum("moderation_status")

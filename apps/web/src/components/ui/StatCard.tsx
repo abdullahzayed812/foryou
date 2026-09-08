@@ -23,9 +23,9 @@ export function StatCard({
   tone?: keyof typeof TONES;
 }) {
   return (
-    <Card className="flex items-start gap-3 p-4">
+    <Card className="flex items-start gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lifted">
       <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TONES[tone]}`}
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${TONES[tone]}`}
       >
         <span className="h-5 w-5">{icon}</span>
       </span>
@@ -33,7 +33,7 @@ export function StatCard({
         <span className="text-xs font-medium text-neutral-500">{label}</span>
         {/* Never truncate — this often renders money amounts, and clipping a
             number with an ellipsis reads as a real (wrong) value, not as cut off. */}
-        <span className="font-display text-lg leading-snug font-bold break-words text-neutral-900">
+        <span className="font-display text-xl leading-snug font-bold break-words text-neutral-900">
           {value}
         </span>
         {hint && <span className="text-xs text-neutral-500">{hint}</span>}

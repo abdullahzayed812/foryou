@@ -1,5 +1,6 @@
 import { eventBus } from "../../lib/events.js";
 import { ordersRepository } from "../orders/repository.js";
+import { wantedRepository } from "../wanted/repository.js";
 import { notificationsService } from "./service.js";
 import "../orders/events.js";
 import "../offers/events.js";
@@ -9,6 +10,7 @@ import "../reviews/events.js";
 import "../verification/events.js";
 import "../wallet/events.js";
 import "../products/events.js";
+import "../wanted/events.js";
 import "../users/events.js";
 
 /**
@@ -245,6 +247,23 @@ export function registerNotificationSubscribers(): void {
         "product_restocked",
         "Back in stock",
         "A product you subscribed to is available again.",
+        { productId },
+      );
+    }
+  });
+
+  // WANTED → EXPRESS: notify every 🔔 requester of that cycle exactly once
+  // (wanted_notify_requests.notified_at is the per-cycle dedupe guard).
+  eventBus.subscribe("wanted.cycle.completed", async ({ productId, cycleId }) => {
+    const pending = await wantedRepository.listPendingNotifyRequests(cycleId);
+    if (pending.length === 0) return;
+    await wantedRepository.markNotified(cycleId);
+    for (const req of pending) {
+      void notificationsService.notify(
+        req.customerId,
+        "product_wanted_available",
+        "المنتج بقى متوفر 🎉",
+        "المنتج اللي كنت مهتم بيه بقى متوفر على FOR YOU EXPRESS 🎉",
         { productId },
       );
     }

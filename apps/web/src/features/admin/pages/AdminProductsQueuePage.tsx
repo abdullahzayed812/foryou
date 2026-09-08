@@ -7,6 +7,7 @@ import { TextField } from "@/components/ui/TextField";
 import { PageSpinner } from "@/components/ui/Spinner";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorAlert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 import type { Product } from "@/features/catalog/types";
 
 function QueueRow({ product }: { product: Product }) {
@@ -26,7 +27,12 @@ function QueueRow({ product }: { product: Product }) {
         {/* No link to the public product page here — a pending_review
             product 404s on GET /products/:id by design (only published
             products are publicly readable), so this is deliberately plain text. */}
-        <p className="font-medium text-neutral-900">{product.name}</p>
+        <p className="flex items-center gap-2 font-medium text-neutral-900">
+          {product.name}
+          <Badge tone={product.lifecycle === "express" ? "neutral" : "brand"}>
+            {t(`wanted.lifecycle.${product.lifecycle}`)}
+          </Badge>
+        </p>
         <p className="text-sm text-neutral-500">
           {Number(product.price).toFixed(2)} {t("common.egp")} · {product.countryOfOrigin}
         </p>

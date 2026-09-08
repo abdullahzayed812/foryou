@@ -53,3 +53,33 @@ export function useDeleteOwnerProduct(basePath: OwnerProductsBasePath) {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: [basePath] }),
   });
 }
+
+export function useOwnerWantedCycles(basePath: OwnerProductsBasePath, id: string | undefined) {
+  return useQuery({
+    queryKey: [basePath, id, "wanted-cycles"],
+    queryFn: () => createOwnerProductsApi(basePath).wantedCycles(id!),
+    enabled: Boolean(id),
+  });
+}
+
+/** WANTED lifecycle transitions for an owned product — each refreshes the product + its cycle history. */
+export function useOwnerWantedTransitions(basePath: OwnerProductsBasePath, id: string) {
+  const queryClient = useQueryClient();
+  const api = createOwnerProductsApi(basePath);
+  const invalidate = () => {
+    void queryClient.invalidateQueries({ queryKey: [basePath] });
+    void queryClient.invalidateQueries({ queryKey: [basePath, id] });
+    void queryClient.invalidateQueries({ queryKey: [basePath, id, "wanted-cycles"] });
+  };
+  return {
+    startWanted: useMutation({ mutationFn: () => api.startWanted(id), onSuccess: invalidate }),
+    startImporting: useMutation({
+      mutationFn: () => api.startImporting(id),
+      onSuccess: invalidate,
+    }),
+    completeImport: useMutation({
+      mutationFn: (importedQuantity: number) => api.completeImport(id, importedQuantity),
+      onSuccess: invalidate,
+    }),
+  };
+}

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/Card";
@@ -45,10 +46,24 @@ const ORDER_STATUS_TONE: Record<OrderStage, "warning" | "brand" | "success" | "d
 
 const ACTIVE_STAGES: OrderStage[] = ["awaiting_deposit", "deposit_paid", "processing", "delivered"];
 
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">{children}</p>
+  );
+}
+
 function QuickLink({ to, label }: { to: string; label: string }) {
   return (
-    <Link to={to}>
-      <Card className="p-4 text-center transition-shadow hover:shadow-md">{label}</Card>
+    <Link to={to} className="group">
+      <Card className="flex items-center justify-between gap-2 p-4 transition-all duration-150 group-hover:-translate-y-0.5 group-hover:border-brand-200 group-hover:shadow-lifted">
+        <span className="text-sm font-semibold text-neutral-800">{label}</span>
+        <span
+          aria-hidden="true"
+          className="text-brand-400 transition-transform duration-150 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+        >
+          →
+        </span>
+      </Card>
     </Link>
   );
 }
@@ -60,13 +75,15 @@ function RecentOrders({ orders, basePath }: { orders: Order[]; basePath: string 
 
   return (
     <Card className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-neutral-900">{t("dashboard.recentOrders")}</h2>
-      <div className="flex flex-col gap-2">
+      <h2 className="font-display text-sm font-semibold text-neutral-900">
+        {t("dashboard.recentOrders")}
+      </h2>
+      <div className="flex flex-col gap-1">
         {recent.map((order) => (
           <Link
             key={order.id}
             to={`${basePath}/${order.id}`}
-            className="flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-neutral-50"
+            className="flex items-center justify-between rounded-lg px-2 py-2 transition-colors hover:bg-neutral-100"
           >
             <span className="text-sm text-neutral-700">
               {Number(order.totalAmount).toFixed(2)} {t("common.egp")}
@@ -88,31 +105,34 @@ function CustomerHome() {
   const activeOrders = orders?.filter((o) => ACTIVE_STAGES.includes(o.stage)).length ?? 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard
-          icon={<OrdersIcon />}
-          label={t("dashboard.stats.activeOrders")}
-          value={activeOrders}
-        />
-        <StatCard
-          icon={<HeartIcon />}
-          label={t("dashboard.stats.wishlist")}
-          value={wishlist?.length ?? 0}
-          tone="danger"
-        />
-        <StatCard
-          icon={<ClockIcon />}
-          label={t("dashboard.stats.pendingReviews")}
-          value={pending?.length ?? 0}
-          tone="warning"
-        />
-        <StatCard
-          icon={<BoxIcon />}
-          label={t("dashboard.stats.totalOrders")}
-          value={orders?.length ?? 0}
-          tone="neutral"
-        />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.overview")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatCard
+            icon={<OrdersIcon />}
+            label={t("dashboard.stats.activeOrders")}
+            value={activeOrders}
+          />
+          <StatCard
+            icon={<HeartIcon />}
+            label={t("dashboard.stats.wishlist")}
+            value={wishlist?.length ?? 0}
+            tone="danger"
+          />
+          <StatCard
+            icon={<ClockIcon />}
+            label={t("dashboard.stats.pendingReviews")}
+            value={pending?.length ?? 0}
+            tone="warning"
+          />
+          <StatCard
+            icon={<BoxIcon />}
+            label={t("dashboard.stats.totalOrders")}
+            value={orders?.length ?? 0}
+            tone="neutral"
+          />
+        </div>
       </div>
 
       {orders && <RecentOrders orders={orders} basePath="/orders" />}
@@ -130,11 +150,14 @@ function CustomerHome() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <QuickLink to="/products" label={t("nav.browse")} />
-        <QuickLink to="/import-requests/new" label={t("dashboard.newRequest")} />
-        <QuickLink to="/orders" label={t("nav.orders")} />
-        <QuickLink to="/wishlist" label={t("nav.wishlist")} />
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.quickActions")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <QuickLink to="/products" label={t("nav.browse")} />
+          <QuickLink to="/import-requests/new" label={t("dashboard.newRequest")} />
+          <QuickLink to="/orders" label={t("nav.orders")} />
+          <QuickLink to="/wishlist" label={t("nav.wishlist")} />
+        </div>
       </div>
     </div>
   );
@@ -149,31 +172,34 @@ function SellerHome() {
   const activeOrders = orders?.filter((o) => ACTIVE_STAGES.includes(o.stage)).length ?? 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard
-          icon={<WalletIcon />}
-          label={t("wallet.available")}
-          value={`${Number(wallet?.availableBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
-          tone="success"
-        />
-        <StatCard
-          icon={<CoinIcon />}
-          label={t("wallet.pending")}
-          value={`${Number(wallet?.pendingBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
-          tone="warning"
-        />
-        <StatCard
-          icon={<InboxIcon />}
-          label={t("dashboard.stats.openRequests")}
-          value={openRequests?.length ?? 0}
-        />
-        <StatCard
-          icon={<OrdersIcon />}
-          label={t("dashboard.stats.activeOrders")}
-          value={activeOrders}
-          tone="neutral"
-        />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.overview")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatCard
+            icon={<WalletIcon />}
+            label={t("wallet.available")}
+            value={`${Number(wallet?.availableBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
+            tone="success"
+          />
+          <StatCard
+            icon={<CoinIcon />}
+            label={t("wallet.pending")}
+            value={`${Number(wallet?.pendingBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
+            tone="warning"
+          />
+          <StatCard
+            icon={<InboxIcon />}
+            label={t("dashboard.stats.openRequests")}
+            value={openRequests?.length ?? 0}
+          />
+          <StatCard
+            icon={<OrdersIcon />}
+            label={t("dashboard.stats.activeOrders")}
+            value={activeOrders}
+            tone="neutral"
+          />
+        </div>
       </div>
 
       {orders && <RecentOrders orders={orders} basePath="/sellers/me/orders" />}
@@ -191,11 +217,14 @@ function SellerHome() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <QuickLink to="/sellers/me/products/new" label={t("ownerProducts.list.create")} />
-        <QuickLink to="/sellers/me/import-requests" label={t("nav.requestQueue")} />
-        <QuickLink to="/sellers/me/orders" label={t("nav.orders")} />
-        <QuickLink to="/sellers/me/wallet" label={t("nav.wallet")} />
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.quickActions")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <QuickLink to="/sellers/me/products/new" label={t("ownerProducts.list.create")} />
+          <QuickLink to="/sellers/me/import-requests" label={t("nav.requestQueue")} />
+          <QuickLink to="/sellers/me/orders" label={t("nav.orders")} />
+          <QuickLink to="/sellers/me/wallet" label={t("nav.wallet")} />
+        </div>
       </div>
     </div>
   );
@@ -210,40 +239,46 @@ function MerchantHome() {
   const activeOrders = orders?.filter((o) => ACTIVE_STAGES.includes(o.stage)).length ?? 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard
-          icon={<WalletIcon />}
-          label={t("wallet.available")}
-          value={`${Number(wallet?.availableBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
-          tone="success"
-        />
-        <StatCard
-          icon={<CoinIcon />}
-          label={t("wallet.pending")}
-          value={`${Number(wallet?.pendingBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
-          tone="warning"
-        />
-        <StatCard
-          icon={<OrdersIcon />}
-          label={t("dashboard.stats.activeOrders")}
-          value={activeOrders}
-        />
-        <StatCard
-          icon={<BoxIcon />}
-          label={t("dashboard.stats.products")}
-          value={products?.length ?? 0}
-          tone="neutral"
-        />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.overview")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatCard
+            icon={<WalletIcon />}
+            label={t("wallet.available")}
+            value={`${Number(wallet?.availableBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
+            tone="success"
+          />
+          <StatCard
+            icon={<CoinIcon />}
+            label={t("wallet.pending")}
+            value={`${Number(wallet?.pendingBalance ?? 0).toFixed(2)} ${t("common.egp")}`}
+            tone="warning"
+          />
+          <StatCard
+            icon={<OrdersIcon />}
+            label={t("dashboard.stats.activeOrders")}
+            value={activeOrders}
+          />
+          <StatCard
+            icon={<BoxIcon />}
+            label={t("dashboard.stats.products")}
+            value={products?.length ?? 0}
+            tone="neutral"
+          />
+        </div>
       </div>
 
       {orders && <RecentOrders orders={orders} basePath="/merchants/me/orders" />}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <QuickLink to="/merchants/me/products/new" label={t("ownerProducts.list.create")} />
-        <QuickLink to="/merchants/me/orders" label={t("nav.orders")} />
-        <QuickLink to="/merchants/me/wallet" label={t("nav.wallet")} />
-        <QuickLink to="/merchants/me/reviews" label={t("nav.reviews")} />
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.quickActions")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <QuickLink to="/merchants/me/products/new" label={t("ownerProducts.list.create")} />
+          <QuickLink to="/merchants/me/orders" label={t("nav.orders")} />
+          <QuickLink to="/merchants/me/wallet" label={t("nav.wallet")} />
+          <QuickLink to="/merchants/me/reviews" label={t("nav.reviews")} />
+        </div>
       </div>
     </div>
   );
@@ -260,38 +295,48 @@ function AdminHome() {
       .reduce((sum, d) => sum + d.count, 0) ?? 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard icon={<UsersIcon />} label={t("dashboard.stats.totalUsers")} value={totalUsers} />
-        <StatCard
-          icon={<CoinIcon />}
-          label={t("dashboard.stats.completedGMV")}
-          value={`${(stats?.orders.completedGMV ?? 0).toFixed(0)} ${t("common.egp")}`}
-          tone="success"
-        />
-        <StatCard
-          icon={<AlertIcon />}
-          label={t("dashboard.stats.openDisputes")}
-          value={openDisputes}
-          tone={openDisputes > 0 ? "danger" : "neutral"}
-        />
-        <StatCard
-          icon={<StarIcon />}
-          label={t("dashboard.stats.avgRating")}
-          value={(stats?.reviews.average ?? 0).toFixed(1)}
-          tone="warning"
-        />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.overview")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatCard
+            icon={<UsersIcon />}
+            label={t("dashboard.stats.totalUsers")}
+            value={totalUsers}
+          />
+          <StatCard
+            icon={<CoinIcon />}
+            label={t("dashboard.stats.completedGMV")}
+            value={`${(stats?.orders.completedGMV ?? 0).toFixed(0)} ${t("common.egp")}`}
+            tone="success"
+          />
+          <StatCard
+            icon={<AlertIcon />}
+            label={t("dashboard.stats.openDisputes")}
+            value={openDisputes}
+            tone={openDisputes > 0 ? "danger" : "neutral"}
+          />
+          <StatCard
+            icon={<StarIcon />}
+            label={t("dashboard.stats.avgRating")}
+            value={(stats?.reviews.average ?? 0).toFixed(1)}
+            tone="warning"
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <QuickLink to="/admin/verification-queue" label={t("nav.verificationQueue")} />
-        <QuickLink to="/admin/products-queue" label={t("nav.moderationQueue")} />
-        <QuickLink to="/admin/disputes-queue" label={t("nav.disputesQueue")} />
-        <QuickLink to="/admin/withdrawals" label={t("nav.withdrawals")} />
-        <QuickLink to="/admin/users" label={t("nav.users")} />
-        <QuickLink to="/admin/catalog" label={t("admin.catalog.title")} />
-        <QuickLink to="/admin/stats" label={t("nav.stats")} />
-        <QuickLink to="/admin/settings" label={t("nav.settings")} />
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("dashboard.sections.quickActions")}</SectionLabel>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <QuickLink to="/admin/verification-queue" label={t("nav.verificationQueue")} />
+          <QuickLink to="/admin/products-queue" label={t("nav.moderationQueue")} />
+          <QuickLink to="/admin/disputes-queue" label={t("nav.disputesQueue")} />
+          <QuickLink to="/admin/withdrawals" label={t("nav.withdrawals")} />
+          <QuickLink to="/admin/users" label={t("nav.users")} />
+          <QuickLink to="/admin/catalog" label={t("admin.catalog.title")} />
+          <QuickLink to="/admin/stats" label={t("nav.stats")} />
+          <QuickLink to="/admin/settings" label={t("nav.settings")} />
+        </div>
       </div>
     </div>
   );
@@ -314,48 +359,51 @@ export function DashboardPage() {
   const role = activeRole ?? me.roles[0];
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <Card>
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold text-neutral-900">
-              {t("dashboard.welcome", { name })}
-            </h1>
-            <p className="mt-1 text-sm text-neutral-600">{me.email}</p>
-          </div>
-          {trust && (
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
-              <span className="h-6 w-6">
-                <StarIcon />
-              </span>
-            </span>
-          )}
-        </div>
-
-        <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt className="font-medium text-neutral-500">{t("dashboard.yourRoles")}</dt>
-            <dd className="mt-1 flex flex-wrap gap-1">
-              {me.roles.map((r) => (
-                <span
-                  key={r}
-                  className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700"
-                >
-                  {t(`roles.${r}`)}
-                </span>
-              ))}
-            </dd>
-          </div>
-          {trust && (
-            <div>
-              <dt className="font-medium text-neutral-500">{t("dashboard.trustLevel")}</dt>
-              <dd className="mt-1">
-                <Badge tone={TRUST_TONE[trust.level]}>{t(`trustLevel.${trust.level}`)}</Badge>
-              </dd>
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      {/* Premium hero */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-800 to-brand-950 p-6 text-white shadow-lifted sm:p-8">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full opacity-40 blur-3xl"
+          style={{
+            background: "radial-gradient(circle, var(--color-accent-400), transparent 70%)",
+          }}
+        />
+        <div className="relative flex flex-col gap-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-brand-100">{t("dashboard.sections.greeting")}</p>
+              <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                {name}
+              </h1>
+              <p className="mt-1 truncate text-sm text-brand-200">{me.email}</p>
             </div>
-          )}
-        </dl>
-      </Card>
+            {trust && (
+              <span className="shrink-0 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25 backdrop-blur">
+                {t(`trustLevel.${trust.level}`)}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {me.roles.map((r) => (
+              <span
+                key={r}
+                className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/20"
+              >
+                {t(`roles.${r}`)}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {trust && (
+        <Card className="flex items-center justify-between gap-3 py-4">
+          <span className="text-sm font-medium text-neutral-500">{t("dashboard.trustLevel")}</span>
+          <Badge tone={TRUST_TONE[trust.level]}>{t(`trustLevel.${trust.level}`)}</Badge>
+        </Card>
+      )}
 
       {role === "customer" && <CustomerHome />}
       {role === "seller" && <SellerHome />}

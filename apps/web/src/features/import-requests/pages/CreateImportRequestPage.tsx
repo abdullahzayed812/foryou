@@ -60,15 +60,19 @@ export function CreateImportRequestPage() {
 
   return (
     <Card className="mx-auto max-w-xl">
-      <h1 className="text-xl font-bold text-neutral-900">{t("importRequests.create.title")}</h1>
-      <p className="mt-1 text-sm text-neutral-600">{t("importRequests.create.subtitle")}</p>
+      <h1 className="font-display text-xl font-bold text-neutral-900">
+        {t("importRequests.create.title")}
+      </h1>
+      <p className="mt-1 text-sm leading-relaxed text-neutral-600">
+        {t("importRequests.create.subtitle")}
+      </p>
 
       <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
         <ErrorAlert error={create.error} />
         {validationError && (
           <div
             role="alert"
-            className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            className="flex items-start gap-2.5 rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700"
           >
             {validationError}
           </div>

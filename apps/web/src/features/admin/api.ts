@@ -3,7 +3,7 @@ import { apiClient } from "@/lib/api-client";
 import type { Product } from "@/features/catalog/types";
 import type { Dispute } from "@/features/disputes/types";
 import type { Review } from "@/features/reviews/types";
-import type { Category, Brand } from "@/features/catalog/types";
+import type { Category, Brand, WantedCycleAnalytics } from "@/features/catalog/types";
 import type {
   AdminUserListItem,
   AdminUserDetail,
@@ -45,6 +45,10 @@ export const adminVerificationApi = {
 
 export const adminProductsApi = {
   queue: () => apiClient.get<Product[]>("/admin/products/queue").then((r) => r.data),
+  wantedCycles: (id: string) =>
+    apiClient
+      .get<WantedCycleAnalytics[]>(`/admin/products/${id}/wanted/cycles`)
+      .then((r) => r.data),
   approve: (id: string) =>
     apiClient.post<Product>(`/admin/products/${id}/approve`).then((r) => r.data),
   reject: (id: string, reason: string) =>

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { catalogApi, searchApi } from "./api";
 import type { BrowseQuery } from "./types";
 
@@ -36,4 +36,28 @@ export function useBrands() {
 
 export function useNotifyMe() {
   return useMutation({ mutationFn: catalogApi.notifyMe });
+}
+
+export function useWanted(id: string | undefined) {
+  return useQuery({
+    queryKey: ["products", id, "wanted"],
+    queryFn: () => catalogApi.getWanted(id!),
+    enabled: Boolean(id),
+  });
+}
+
+/** ❤️ Like / 🔔 Notify Me toggles for a WANTED product — all refresh the same cycle view. */
+export function useWantedInteraction(id: string) {
+  const queryClient = useQueryClient();
+  const invalidate = () =>
+    void queryClient.invalidateQueries({ queryKey: ["products", id, "wanted"] });
+  return {
+    like: useMutation({ mutationFn: () => catalogApi.likeWanted(id), onSuccess: invalidate }),
+    unlike: useMutation({ mutationFn: () => catalogApi.unlikeWanted(id), onSuccess: invalidate }),
+    notify: useMutation({ mutationFn: () => catalogApi.notifyWanted(id), onSuccess: invalidate }),
+    cancelNotify: useMutation({
+      mutationFn: () => catalogApi.cancelNotifyWanted(id),
+      onSuccess: invalidate,
+    }),
+  };
 }

@@ -4,11 +4,14 @@ import { useSearchParams } from "react-router-dom";
 import { useBrowseProducts, useCategories } from "@/features/catalog/hooks";
 import { ProductCard } from "@/features/catalog/ProductCard";
 import { WishlistToggle } from "@/features/wishlist/WishlistToggle";
+import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { PageSpinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { CardGridSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SearchIcon } from "@/components/ui/icons";
 import type { BrowseQuery } from "@/features/catalog/types";
 
 export function BrowsePage() {
@@ -33,58 +36,73 @@ export function BrowsePage() {
     setParams(next);
   }
 
+  const hasFilters = Boolean(params.get("q") || params.get("categoryId"));
+
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-neutral-900">{t("catalog.browse.title")}</h1>
+      <PageHeader title={t("catalog.browse.title")} />
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          updateParam("q", q);
-        }}
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm"
-      >
-        <div className="min-w-[220px] flex-1">
-          <TextField
-            label={t("catalog.browse.search")}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-        </div>
-        <div className="w-48">
-          <Select
-            label={t("catalog.browse.category")}
-            value={params.get("categoryId") ?? ""}
-            onChange={(e) => updateParam("categoryId", e.target.value)}
-          >
-            <option value="">{t("catalog.browse.allCategories")}</option>
-            {categories?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nameEn}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="w-44">
-          <Select
-            label={t("catalog.browse.sort")}
-            value={params.get("sort") ?? "newest"}
-            onChange={(e) => updateParam("sort", e.target.value)}
-          >
-            <option value="newest">{t("catalog.browse.sortNewest")}</option>
-            <option value="lowest_price">{t("catalog.browse.sortLowestPrice")}</option>
-            <option value="highest_price">{t("catalog.browse.sortHighestPrice")}</option>
-          </Select>
-        </div>
-        <Button type="submit" fullWidth={false}>
-          {t("catalog.browse.searchSubmit")}
-        </Button>
-      </form>
+      <Card className="p-4 sm:p-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            updateParam("q", q);
+          }}
+          className="flex flex-wrap items-end gap-3"
+        >
+          <div className="min-w-56 flex-1">
+            <TextField
+              label={t("catalog.browse.search")}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </div>
+          <div className="w-48">
+            <Select
+              label={t("catalog.browse.category")}
+              value={params.get("categoryId") ?? ""}
+              onChange={(e) => updateParam("categoryId", e.target.value)}
+            >
+              <option value="">{t("catalog.browse.allCategories")}</option>
+              {categories?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nameEn}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="w-44">
+            <Select
+              label={t("catalog.browse.sort")}
+              value={params.get("sort") ?? "newest"}
+              onChange={(e) => updateParam("sort", e.target.value)}
+            >
+              <option value="newest">{t("catalog.browse.sortNewest")}</option>
+              <option value="lowest_price">{t("catalog.browse.sortLowestPrice")}</option>
+              <option value="highest_price">{t("catalog.browse.sortHighestPrice")}</option>
+            </Select>
+          </div>
+          <Button type="submit" fullWidth={false}>
+            {t("catalog.browse.searchSubmit")}
+          </Button>
+        </form>
+      </Card>
 
-      {isLoading && <PageSpinner />}
+      {isLoading && <CardGridSkeleton tiles={8} />}
 
       {!isLoading && data?.items.length === 0 && (
-        <EmptyState title={t("catalog.browse.empty")} hint={t("catalog.browse.emptyHint")} />
+        <EmptyState
+          icon={<SearchIcon />}
+          title={t("catalog.browse.empty")}
+          hint={t("catalog.browse.emptyHint")}
+          action={
+            hasFilters ? (
+              <Button variant="secondary" fullWidth={false} onClick={() => setParams({})}>
+                {t("catalog.browse.clearFilters")}
+              </Button>
+            ) : undefined
+          }
+        />
       )}
 
       {!isLoading && data && data.items.length > 0 && (

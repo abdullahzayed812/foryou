@@ -1,4 +1,13 @@
-import { pgTable, uuid, text, timestamp, jsonb, pgEnum, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  jsonb,
+  pgEnum,
+  index,
+  boolean,
+} from "drizzle-orm/pg-core";
 import { users } from "../users/schema.js";
 
 /**
@@ -28,6 +37,7 @@ export const notificationTypeEnum = pgEnum("notification_type", [
   "product_published",
   "product_pending_review",
   "product_restocked",
+  "product_wanted_available",
   "account_suspended",
   "account_reactivated",
 ]);
@@ -50,3 +60,25 @@ export const notifications = pgTable(
   },
   (table) => [index("notifications_user_id_idx").on(table.userId, table.createdAt)],
 );
+
+/**
+ * One row per account. Each column is a user-facing notification category
+ * (see `NOTIFICATION_PREFERENCE_CATEGORIES` in `@foryou/shared`); `false`
+ * mutes every in-app notification in that category for the user. The row is
+ * created lazily on first change — a missing row means "all categories on"
+ * (`DEFAULT_NOTIFICATION_PREFERENCES`). Account-security notices have no
+ * column and are always delivered.
+ */
+export const notificationPreferences = pgTable("notification_preferences", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  orders: boolean("orders").notNull().default(true),
+  offers: boolean("offers").notNull().default(true),
+  disputes: boolean("disputes").notNull().default(true),
+  reviews: boolean("reviews").notNull().default(true),
+  verification: boolean("verification").notNull().default(true),
+  wallet: boolean("wallet").notNull().default(true),
+  products: boolean("products").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

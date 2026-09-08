@@ -1,9 +1,11 @@
 import { eq, and, desc, isNull, count } from "drizzle-orm";
+import type { NotificationPreferenceCategory } from "@foryou/shared";
 import { db } from "../../db/index.js";
-import { notifications } from "./schema.js";
+import { notifications, notificationPreferences } from "./schema.js";
 
 export type NotificationRow = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
+export type NotificationPreferencesRow = typeof notificationPreferences.$inferSelect;
 
 export class NotificationsRepository {
   async create(data: NewNotification): Promise<NotificationRow> {
@@ -42,6 +44,30 @@ export class NotificationsRepository {
       .update(notifications)
       .set({ readAt: new Date() })
       .where(and(eq(notifications.userId, userId), isNull(notifications.readAt)));
+  }
+
+  // ---- preferences ----
+
+  getPreferences(userId: string): Promise<NotificationPreferencesRow | undefined> {
+    return db.query.notificationPreferences.findFirst({
+      where: eq(notificationPreferences.userId, userId),
+    });
+  }
+
+  async upsertPreferences(
+    userId: string,
+    patch: Partial<Record<NotificationPreferenceCategory, boolean>>,
+  ): Promise<NotificationPreferencesRow> {
+    const [row] = await db
+      .insert(notificationPreferences)
+      .values({ userId, ...patch })
+      .onConflictDoUpdate({
+        target: notificationPreferences.userId,
+        set: { ...patch, updatedAt: new Date() },
+      })
+      .returning();
+    if (!row) throw new Error("failed to upsert notification preferences");
+    return row;
   }
 }
 

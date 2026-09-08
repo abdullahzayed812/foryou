@@ -50,6 +50,14 @@ export function useChangePassword() {
   return useMutation({ mutationFn: authApi.changePassword });
 }
 
+export function useForgotPassword() {
+  return useMutation({ mutationFn: authApi.forgotPassword });
+}
+
+export function useResetPassword() {
+  return useMutation({ mutationFn: authApi.resetPassword });
+}
+
 export function useAddresses() {
   const status = useAuthStore((s) => s.status);
   return useQuery({

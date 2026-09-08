@@ -17,7 +17,7 @@ export function ProductCard({ product, action }: { product: Product; action?: Re
   const cover = product.images.find((i) => i.isCover) ?? product.images[0];
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-soft transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lifted">
       <Link to={`/products/${product.id}`} className="block">
         <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
           {cover?.url ? (
@@ -34,14 +34,22 @@ export function ProductCard({ product, action }: { product: Product; action?: Re
             </div>
           )}
           <span className="absolute bottom-2 start-2">
-            <Badge tone={STATUS_TONE[product.status]}>{t(`productStatus.${product.status}`)}</Badge>
+            {product.lifecycle === "express" ? (
+              <Badge tone={STATUS_TONE[product.status]}>
+                {t(`productStatus.${product.status}`)}
+              </Badge>
+            ) : (
+              <Badge tone="brand">
+                {t(product.lifecycle === "importing" ? "wanted.importingBadge" : "wanted.badge")}
+              </Badge>
+            )}
           </span>
         </div>
       </Link>
       {action && <div className="absolute end-2 top-2">{action}</div>}
       <div className="flex flex-1 flex-col gap-1 p-3">
         {product.brand?.name && (
-          <span className="text-xs font-medium tracking-wide text-neutral-400 uppercase">
+          <span className="text-xs font-medium tracking-wide text-neutral-500 uppercase">
             {product.brand.name}
           </span>
         )}
@@ -52,7 +60,7 @@ export function ProductCard({ product, action }: { product: Product; action?: Re
           {product.name}
         </Link>
         <div className="mt-1 flex items-center justify-between gap-2">
-          <span className="text-base font-bold text-brand-700">
+          <span className="font-display text-base font-bold text-neutral-900">
             {Number(product.price).toFixed(2)} {t("common.egp")}
           </span>
           <span className="truncate text-xs text-neutral-500">{product.countryOfOrigin}</span>

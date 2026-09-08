@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import type { Product } from "@/features/catalog/types";
+import type { Product, WantedCycleAnalytics } from "@/features/catalog/types";
 
 export interface ProductImageInput {
   mediaAssetId: string;
@@ -19,6 +19,7 @@ export interface CreateProductInput {
   availableQuantity: number;
   warrantyAvailable: boolean;
   isComingSoon: boolean;
+  startAsWanted: boolean;
   tags: string[];
   images: ProductImageInput[];
 }
@@ -39,5 +40,19 @@ export function createOwnerProductsApi(
     replaceImages: (id: string, images: ProductImageInput[]) =>
       apiClient.put<Product>(`${basePath}/${id}/images`, { images }).then((r) => r.data),
     delete: (id: string) => apiClient.delete(`${basePath}/${id}`).then((r) => r.data),
+
+    // ---- FOR YOU WANTED lifecycle ----
+    wantedCycles: (id: string) =>
+      apiClient
+        .get<WantedCycleAnalytics[]>(`${basePath}/${id}/wanted/cycles`)
+        .then((r) => r.data),
+    startWanted: (id: string) =>
+      apiClient.post<unknown>(`${basePath}/${id}/wanted/start`).then((r) => r.data),
+    startImporting: (id: string) =>
+      apiClient.post<unknown>(`${basePath}/${id}/wanted/importing`).then((r) => r.data),
+    completeImport: (id: string, importedQuantity: number) =>
+      apiClient
+        .post<unknown>(`${basePath}/${id}/wanted/complete-import`, { importedQuantity })
+        .then((r) => r.data),
   };
 }

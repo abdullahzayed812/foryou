@@ -5,11 +5,13 @@ import {
   replaceProductImagesSchema,
   listProductsQuerySchema,
   rejectProductSchema,
+  completeImportSchema,
 } from "@foryou/shared";
 import type { Role } from "@foryou/shared";
-import { requireAuth, requireRole, requireActiveAccount } from "../auth/middleware.js";
+import { requireAuth, requireRole, requireActiveAccount, optionalAuth } from "../auth/middleware.js";
 import { UnauthenticatedError } from "../../lib/http-errors.js";
 import { productsService } from "./service.js";
+import { wantedService } from "../wanted/service.js";
 
 /** Public — mounted at /products. */
 export const productsRouter = Router();
@@ -26,6 +28,39 @@ productsRouter.get("/:id", async (req, res) => {
 productsRouter.post("/:id/notify-me", requireAuth, requireRole("customer"), async (req, res) => {
   if (!req.user) throw new UnauthenticatedError();
   await productsService.notifyMeWhenAvailable(req.params.id as string, req.user.id);
+  res.status(204).send();
+});
+
+// ---- FOR YOU WANTED — customer-facing (❤️ Like / 🔔 Notify Me) ----
+
+/** Current WANTED engagement for a product (null cycle once it's EXPRESS — WANTED counters are historical then). */
+productsRouter.get("/:id/wanted", optionalAuth, async (req, res) => {
+  res.json(await wantedService.getView(req.params.id as string, req.user?.id));
+});
+
+const asCustomer = [requireAuth, requireRole("customer")] as const;
+
+productsRouter.post("/:id/wanted/like", ...asCustomer, async (req, res) => {
+  if (!req.user) throw new UnauthenticatedError();
+  await wantedService.like(req.params.id as string, req.user.id);
+  res.status(204).send();
+});
+
+productsRouter.delete("/:id/wanted/like", ...asCustomer, async (req, res) => {
+  if (!req.user) throw new UnauthenticatedError();
+  await wantedService.unlike(req.params.id as string, req.user.id);
+  res.status(204).send();
+});
+
+productsRouter.post("/:id/wanted/notify", ...asCustomer, async (req, res) => {
+  if (!req.user) throw new UnauthenticatedError();
+  await wantedService.requestNotify(req.params.id as string, req.user.id);
+  res.status(204).send();
+});
+
+productsRouter.delete("/:id/wanted/notify", ...asCustomer, async (req, res) => {
+  if (!req.user) throw new UnauthenticatedError();
+  await wantedService.cancelNotify(req.params.id as string, req.user.id);
   res.status(204).send();
 });
 
@@ -75,6 +110,43 @@ export function createOwnerProductsRouter(role: Extract<Role, "seller" | "mercha
     res.status(204).send();
   });
 
+  // ---- FOR YOU WANTED — owner lifecycle controls + analytics ----
+
+  /** Every product this account is currently demand-testing (open WANTED cycles). */
+  router.get("/wanted/dashboard", async (req, res) => {
+    if (!req.user) throw new UnauthenticatedError();
+    res.json(await wantedService.listOwnerWantedProducts(req.user.id, role));
+  });
+
+  /** Full WANTED cycle history for one product (likes, notify requests, imported, sold, remaining, conversion). */
+  router.get("/:id/wanted/cycles", async (req, res) => {
+    if (!req.user) throw new UnauthenticatedError();
+    await productsService.getForOwner(req.user.id, req.params.id as string); // ownership guard
+    res.json(await wantedService.getCycleAnalytics(req.params.id as string));
+  });
+
+  router.post("/:id/wanted/start", async (req, res) => {
+    if (!req.user) throw new UnauthenticatedError();
+    res.status(201).json(await wantedService.startWanted(req.user.id, req.params.id as string));
+  });
+
+  router.post("/:id/wanted/importing", async (req, res) => {
+    if (!req.user) throw new UnauthenticatedError();
+    res.json(await wantedService.startImporting(req.user.id, req.params.id as string));
+  });
+
+  router.post("/:id/wanted/complete-import", async (req, res) => {
+    if (!req.user) throw new UnauthenticatedError();
+    const input = completeImportSchema.parse(req.body);
+    res.json(
+      await wantedService.completeImport(
+        req.user.id,
+        req.params.id as string,
+        input.importedQuantity,
+      ),
+    );
+  });
+
   return router;
 }
 
@@ -84,6 +156,11 @@ productsAdminRouter.use(requireAuth, requireRole("admin"));
 
 productsAdminRouter.get("/queue", async (_req, res) => {
   res.json(await productsService.getModerationQueue());
+});
+
+/** Product lifecycle + WANTED cycle history for admin oversight (reuses the same analytics as the owner view). */
+productsAdminRouter.get("/:id/wanted/cycles", async (req, res) => {
+  res.json(await wantedService.getCycleAnalytics(req.params.id as string));
 });
 
 productsAdminRouter.post("/:id/approve", async (req, res) => {

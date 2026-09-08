@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import { db, closeDb } from "./index.js";
 import { logger } from "../lib/logger.js";
 import { isProd } from "../config/env.js";
+import type { CategoryRow } from "../modules/categories/repository.js";
+import type { BrandRow } from "../modules/brands/repository.js";
 import {
   users,
   userRoles,
@@ -23,44 +25,60 @@ import type { Role } from "@foryou/shared";
 
 const SEED_PASSWORD = "Password123";
 
+// Every write below is idempotent (ON CONFLICT DO NOTHING against the
+// table's unique key), so `db:seed` can be re-run any number of times: it
+// tops up whatever is missing and touches nothing that already exists.
 async function createUser(email: string, role: Role) {
   const passwordHash = await hashPassword(SEED_PASSWORD);
-  const [user] = await db
+  const [inserted] = await db
     .insert(users)
     .values({ email, passwordHash, emailVerifiedAt: new Date() })
+    .onConflictDoNothing({ target: users.email })
     .returning();
+  const user =
+    inserted ?? (await db.select().from(users).where(eq(users.email, email)))[0];
   if (!user) throw new Error(`failed to create user ${email}`);
-  await db.insert(userRoles).values({ userId: user.id, role });
+
+  await db.insert(userRoles).values({ userId: user.id, role }).onConflictDoNothing();
   await trustScoreService.ensureInitialized(user.id);
 
   if (role === "customer") {
-    await db.insert(customerProfiles).values({
-      userId: user.id,
-      firstName: "Layla",
-      lastName: "Hassan",
-      governorate: "Cairo",
-      city: "Nasr City",
-      mobileNumber: "01011111111",
-    });
+    await db
+      .insert(customerProfiles)
+      .values({
+        userId: user.id,
+        firstName: "Layla",
+        lastName: "Hassan",
+        governorate: "Cairo",
+        city: "Nasr City",
+        mobileNumber: "01011111111",
+      })
+      .onConflictDoNothing();
   } else if (role === "seller") {
-    await db.insert(sellerProfiles).values({
-      userId: user.id,
-      fullName: "Mostafa Adel",
-      phoneNumber: "01022222222",
-      importCountries: ["Turkey", "China"],
-      productCategories: ["Electronics", "Fashion"],
-    });
+    await db
+      .insert(sellerProfiles)
+      .values({
+        userId: user.id,
+        fullName: "Mostafa Adel",
+        phoneNumber: "01022222222",
+        importCountries: ["Turkey", "China"],
+        productCategories: ["Electronics", "Fashion"],
+      })
+      .onConflictDoNothing();
   } else if (role === "merchant") {
-    await db.insert(merchantProfiles).values({
-      userId: user.id,
-      businessName: "Cairo Ready Stock Co.",
-      ownerName: "Nourhan Samir",
-      phoneNumber: "01033333333",
-      governorate: "Giza",
-      city: "6th of October",
-      businessCategory: "Electronics & Home",
-      importCountry: "China",
-    });
+    await db
+      .insert(merchantProfiles)
+      .values({
+        userId: user.id,
+        businessName: "Cairo Ready Stock Co.",
+        ownerName: "Nourhan Samir",
+        phoneNumber: "01033333333",
+        governorate: "Giza",
+        city: "6th of October",
+        businessCategory: "Electronics & Home",
+        importCountry: "China",
+      })
+      .onConflictDoNothing();
   }
   return user;
 }
@@ -72,60 +90,76 @@ async function main() {
     );
   }
 
-  const [existingAdmin] = await db.select().from(users).where(eq(users.email, "admin@foryou.dev"));
-  if (existingAdmin) {
-    logger.info("Seed data already present (admin@foryou.dev exists) — skipping.");
-    return;
-  }
+  const existingCategories = await categoriesService.list();
+  const categoryBySlug = new Map<string, CategoryRow>(
+    existingCategories.map((c) => [c.slug, c]),
+  );
+  const ensureCategory = async (
+    input: Parameters<typeof categoriesService.create>[0],
+  ): Promise<CategoryRow> => {
+    const existing = categoryBySlug.get(input.slug);
+    if (existing) return existing;
+    const created = await categoriesService.create(input);
+    categoryBySlug.set(created.slug, created);
+    return created;
+  };
+
+  const existingBrands = await brandsService.list();
+  const brandSlugs = new Set<string>(existingBrands.map((b: BrandRow) => b.slug));
+  const ensureBrand = async (name: string, slug: string) => {
+    if (brandSlugs.has(slug)) return;
+    await brandsService.create({ name, slug });
+    brandSlugs.add(slug);
+  };
 
   logger.info("Seeding categories…");
-  const electronics = await categoriesService.create({
+  const electronics = await ensureCategory({
     nameEn: "Electronics",
     nameAr: "إلكترونيات",
     slug: "electronics",
   });
-  await categoriesService.create({
+  await ensureCategory({
     nameEn: "Mobile Phones",
     nameAr: "هواتف محمولة",
     slug: "mobile-phones",
     parentId: electronics.id,
   });
-  await categoriesService.create({
+  await ensureCategory({
     nameEn: "Laptops & Computers",
     nameAr: "لابتوبات وأجهزة كمبيوتر",
     slug: "laptops-computers",
     parentId: electronics.id,
   });
-  const fashion = await categoriesService.create({
+  const fashion = await ensureCategory({
     nameEn: "Fashion",
     nameAr: "أزياء",
     slug: "fashion",
   });
-  await categoriesService.create({
+  await ensureCategory({
     nameEn: "Shoes",
     nameAr: "أحذية",
     slug: "shoes",
     parentId: fashion.id,
   });
-  await categoriesService.create({
+  await ensureCategory({
     nameEn: "Bags & Accessories",
     nameAr: "حقائب وإكسسوارات",
     slug: "bags-accessories",
     parentId: fashion.id,
   });
-  await categoriesService.create({
+  await ensureCategory({
     nameEn: "Home & Kitchen",
     nameAr: "المنزل والمطبخ",
     slug: "home-kitchen",
   });
 
   logger.info("Seeding brands…");
-  await brandsService.create({ name: "Apple", slug: "apple" });
-  await brandsService.create({ name: "Samsung", slug: "samsung" });
-  await brandsService.create({ name: "Nike", slug: "nike" });
-  await brandsService.create({ name: "Adidas", slug: "adidas" });
-  await brandsService.create({ name: "Zara", slug: "zara" });
-  await brandsService.create({ name: "IKEA", slug: "ikea" });
+  await ensureBrand("Apple", "apple");
+  await ensureBrand("Samsung", "samsung");
+  await ensureBrand("Nike", "nike");
+  await ensureBrand("Adidas", "adidas");
+  await ensureBrand("Zara", "zara");
+  await ensureBrand("IKEA", "ikea");
 
   logger.info("Seeding users…");
   await createUser("admin@foryou.dev", "admin");

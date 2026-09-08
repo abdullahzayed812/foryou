@@ -5,6 +5,7 @@ import { useProduct, useNotifyMe } from "@/features/catalog/hooks";
 import { useReviewsOfUser } from "@/features/reviews/hooks";
 import { useCreateExpressCheckout } from "@/features/orders/hooks";
 import { WishlistToggle } from "@/features/wishlist/WishlistToggle";
+import { WantedPanel } from "@/features/catalog/WantedPanel";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { PageSpinner } from "@/components/ui/Spinner";
@@ -31,7 +32,9 @@ export function ProductDetailPage() {
 
   if (isLoading || !product) return <PageSpinner />;
 
-  const canBuy = product.status !== "coming_soon" && product.status !== "out_of_stock";
+  const isWanted = product.lifecycle === "wanted" || product.lifecycle === "importing";
+  const canBuy =
+    !isWanted && product.status !== "coming_soon" && product.status !== "out_of_stock";
   const images = product.images.length > 0 ? product.images : [];
 
   return (
@@ -74,7 +77,15 @@ export function ProductDetailPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge tone={STATUS_TONE[product.status]}>{t(`productStatus.${product.status}`)}</Badge>
+          {isWanted ? (
+            <Badge tone="brand">
+              {t(product.lifecycle === "importing" ? "wanted.importingBadge" : "wanted.badge")}
+            </Badge>
+          ) : (
+            <Badge tone={STATUS_TONE[product.status]}>
+              {t(`productStatus.${product.status}`)}
+            </Badge>
+          )}
           {reviewData && reviewData.stats.count > 0 && (
             <StarRatingDisplay rating={reviewData.stats.average} count={reviewData.stats.count} />
           )}
@@ -114,7 +125,9 @@ export function ProductDetailPage() {
           )}
         </dl>
 
-        {canBuy ? (
+        {isWanted ? (
+          <WantedPanel productId={product.id} />
+        ) : canBuy ? (
           <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4">
             <label className="flex items-center gap-3 text-sm">
               {t("catalog.product.quantity")}

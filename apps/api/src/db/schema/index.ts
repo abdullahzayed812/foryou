@@ -9,6 +9,7 @@ export * from "../../modules/trust-score/schema.js";
 export * from "../../modules/categories/schema.js";
 export * from "../../modules/brands/schema.js";
 export * from "../../modules/products/schema.js";
+export * from "../../modules/wanted/schema.js";
 export * from "../../modules/import-requests/schema.js";
 export * from "../../modules/offers/schema.js";
 export * from "../../modules/orders/schema.js";

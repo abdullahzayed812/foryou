@@ -6,6 +6,8 @@ import type {
   VerifyOtpInput,
   ResendOtpInput,
   LoginInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
   ChangePasswordInput,
   UpdateCustomerProfileInput,
   UpdateSellerProfileInput,
@@ -44,6 +46,15 @@ export const authApi = {
     apiClient.post<TokenResponse>("/auth/login", input).then((r) => r.data),
 
   logout: () => apiClient.post("/auth/logout").then((r) => r.data),
+
+  // Always resolves 202 regardless of whether the email exists — the API
+  // deliberately gives no account-existence signal, so the page shows the
+  // same "check your inbox" confirmation either way.
+  forgotPassword: (input: ForgotPasswordInput) =>
+    apiClient.post("/auth/password/forgot", input).then((r) => r.data),
+
+  resetPassword: (input: ResetPasswordInput) =>
+    apiClient.post("/auth/password/reset", input).then((r) => r.data),
 
   changePassword: (input: ChangePasswordInput) =>
     apiClient.post("/auth/password/change", input).then((r) => r.data),

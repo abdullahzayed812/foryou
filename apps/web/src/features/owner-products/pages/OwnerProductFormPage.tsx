@@ -13,6 +13,7 @@ import {
 import type { ProductImageInput } from "@/features/owner-products/api";
 import type { Product } from "@/features/catalog/types";
 import { ImagesUploader } from "@/features/owner-products/ImagesUploader";
+import { OwnerWantedPanel } from "@/features/owner-products/OwnerWantedPanel";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
 import { TextArea } from "@/components/ui/TextArea";
@@ -72,6 +73,7 @@ function ProductFormBody({
   );
   const [warrantyAvailable, setWarrantyAvailable] = useState(existing?.warrantyAvailable ?? false);
   const [isComingSoon, setIsComingSoon] = useState(existing?.status === "coming_soon");
+  const [startAsWanted, setStartAsWanted] = useState(false);
   const [tagsText, setTagsText] = useState(existing?.tags.map((t2) => t2.tag).join(", ") ?? "");
   const [images, setImages] = useState<ProductImageInput[]>(
     existing?.images.map((img) => ({
@@ -99,6 +101,7 @@ function ProductFormBody({
     availableQuantity: Number(availableQuantity),
     warrantyAvailable,
     isComingSoon,
+    startAsWanted,
     tags,
     images,
   };
@@ -116,7 +119,7 @@ function ProductFormBody({
     }
 
     if (isEdit && id) {
-      const { images: _imgs, ...updateFields } = fields;
+      const { images: _imgs, startAsWanted: _saw, ...updateFields } = fields;
       update.mutate(
         { id, data: updateFields },
         {
@@ -266,6 +269,16 @@ function ProductFormBody({
             />
             {t("ownerProducts.form.comingSoon")}
           </label>
+          {!isEdit && (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={startAsWanted}
+                onChange={(e) => setStartAsWanted(e.target.checked)}
+              />
+              {t("wanted.owner.startAsWanted")}
+            </label>
+          )}
         </div>
 
         <TextField
@@ -284,6 +297,12 @@ function ProductFormBody({
           {t("common.save")}
         </Button>
       </form>
+
+      {isEdit && existing && (
+        <div className="mt-6">
+          <OwnerWantedPanel basePath={basePath} product={existing} />
+        </div>
+      )}
     </Card>
   );
 }

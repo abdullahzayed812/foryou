@@ -4,8 +4,10 @@ import { useMyImportRequests } from "@/features/import-requests/hooks";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { PageSpinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { InboxIcon } from "@/components/ui/icons";
 
 const STATUS_TONE = {
   open: "brand",
@@ -18,44 +20,56 @@ export function ImportRequestsListPage() {
   const { t } = useTranslation();
   const { data, isLoading } = useMyImportRequests();
 
-  if (isLoading) return <PageSpinner />;
-
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-neutral-900">{t("importRequests.list.title")}</h1>
-        <Link to="/import-requests/new">
-          <Button fullWidth={false}>{t("importRequests.list.create")}</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title={t("importRequests.list.title")}
+        actions={
+          <Link to="/import-requests/new">
+            <Button fullWidth={false}>{t("importRequests.list.create")}</Button>
+          </Link>
+        }
+      />
 
-      {data && data.length === 0 && (
+      {isLoading && <ListSkeleton rows={4} />}
+
+      {!isLoading && data && data.length === 0 && (
         <EmptyState
+          icon={<InboxIcon />}
           title={t("importRequests.list.empty")}
           hint={t("importRequests.list.emptyHint")}
+          action={
+            <Link to="/import-requests/new">
+              <Button fullWidth={false}>{t("importRequests.list.create")}</Button>
+            </Link>
+          }
         />
       )}
 
-      <div className="flex flex-col gap-3">
-        {data?.map((request) => (
-          <Link key={request.id} to={`/import-requests/${request.id}`}>
-            <Card className="flex items-center justify-between p-4 transition-shadow hover:shadow-md">
-              <div>
-                <p className="font-medium text-neutral-900">
-                  {request.links.length} {t("importRequests.list.linksCount")}
-                </p>
-                <p className="text-sm text-neutral-500">
-                  {new Date(request.createdAt).toLocaleDateString()}
-                  {request.sourceCountry ? ` · ${t(`countries.${request.sourceCountry}`)}` : ""}
-                </p>
-              </div>
-              <Badge tone={STATUS_TONE[request.status]}>
-                {t(`importRequestStatus.${request.status}`)}
-              </Badge>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      {!isLoading && data && data.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {data.map((request) => (
+            <Link key={request.id} to={`/import-requests/${request.id}`}>
+              <Card className="flex items-center justify-between gap-4 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lifted">
+                <div className="min-w-0">
+                  <p className="font-medium text-neutral-900">
+                    {request.links.length} {t("importRequests.list.linksCount")}
+                  </p>
+                  <p className="text-sm text-neutral-500">
+                    {new Date(request.createdAt).toLocaleDateString()}
+                    {request.sourceCountry
+                      ? ` · ${t(`countries.${request.sourceCountry}`)}`
+                      : ""}
+                  </p>
+                </div>
+                <Badge tone={STATUS_TONE[request.status]}>
+                  {t(`importRequestStatus.${request.status}`)}
+                </Badge>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

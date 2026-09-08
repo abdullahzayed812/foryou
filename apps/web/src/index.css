@@ -12,81 +12,85 @@
   --font-display:
     "Bricolage Grotesque Variable", "Plus Jakarta Sans Variable", -apple-system, sans-serif;
 
-  /* FOR YOU brand tokens — a punchier teal-emerald than the original flat
-     #279898, still reading as the BRD's "Green Shield" trust color at a
-     glance. Paired with `--color-accent-*`, a violet counterpart used only
-     for gradients/glow — never on its own — so the app keeps one legible
-     brand identity while still getting the two-tone gradient look this
-     direction calls for (architecture doc §10 "Theme"). */
-  --color-brand-50: #ecfdf7;
-  --color-brand-100: #d1faec;
-  --color-brand-200: #a6f2da;
-  --color-brand-300: #6fe2c0;
-  --color-brand-400: #3bc9a3;
-  --color-brand-500: #12ad84;
-  --color-brand-600: #058863;
-  --color-brand-700: #046b4f;
-  --color-brand-800: #0a5541;
-  --color-brand-900: #0a4536;
-  --color-brand-950: #052a21;
+  /* FOR YOU official brand palette (design tokens §1). Token *names* are kept
+     exactly as before so no component needs touching — only the values are
+     re-anchored. `--color-brand-*` is the Deep Teal primary (#0F3D3E at 900),
+     with Secondary Teal (#1B5C57) landing on brand-700 and Deep Text Teal
+     (#0D2E2C) on brand-950. `--color-accent-*` is now the Warm Gold —
+     #E8A33D at 500, Dark Gold #C9862A at 600 — reserved for the primary CTA
+     and the brand gradient, never body text (contrast). Light Mint #D8ECE1
+     is brand-100. */
+  --color-brand-50: #eef5f3;
+  --color-brand-100: #d8ece1;
+  --color-brand-200: #b4d8cc;
+  --color-brand-300: #8bc0b1;
+  --color-brand-400: #5c9e8c;
+  --color-brand-500: #3c7d6e;
+  --color-brand-600: #2c6459;
+  --color-brand-700: #1b5c57;
+  --color-brand-800: #134744;
+  --color-brand-900: #0f3d3e;
+  --color-brand-950: #0d2e2c;
 
-  --color-accent-50: #f1effe;
-  --color-accent-100: #e3dffd;
-  --color-accent-200: #c9c0fb;
-  --color-accent-300: #a79af7;
-  --color-accent-400: #8b79f2;
-  --color-accent-500: #6f55ea;
-  --color-accent-600: #5b3fd6;
-  --color-accent-700: #4930b0;
-  --color-accent-800: #3b278d;
-  --color-accent-900: #302270;
+  --color-accent-50: #fdf4e6;
+  --color-accent-100: #f9e4c2;
+  --color-accent-200: #f1cd90;
+  --color-accent-300: #ecb85f;
+  --color-accent-400: #eaac48;
+  --color-accent-500: #e8a33d;
+  --color-accent-600: #c9862a;
+  --color-accent-700: #a56c22;
+  --color-accent-800: #82551b;
+  --color-accent-900: #5c3c14;
 
-  /* Semantic — deliberately distinct hues from brand/accent so status pills
-     (order stages, dispute states, trust levels) stay legible sitting next
-     to a brand-toned pill in the same row. */
-  --color-success-50: #effcf3;
-  --color-success-100: #d7f8e1;
-  --color-success-200: #aeefc4;
-  --color-success-500: #22a05b;
-  --color-success-600: #16803f;
-  --color-success-700: #106633;
+  /* Semantic — every Success / Error / Pending state across the app draws
+     from these. Success (#6FA37D) and Error (#C97B76) are the official
+     tokens; the 600/700 stops are darkened for AA text on the 50 tints.
+     Warning is a distinct deeper amber so a "pending" pill never reads as
+     the gold CTA sitting next to it. */
+  --color-success-50: #edf5ef;
+  --color-success-100: #d7e9dc;
+  --color-success-200: #b3d3bc;
+  --color-success-500: #6fa37d;
+  --color-success-600: #517f5f;
+  --color-success-700: #3e6249;
 
-  --color-warning-50: #fff8eb;
-  --color-warning-100: #ffedc2;
-  --color-warning-200: #ffdc8a;
-  --color-warning-500: #e8a317;
-  --color-warning-600: #c4820a;
-  --color-warning-700: #9c6407;
+  --color-warning-50: #fdf4e7;
+  --color-warning-100: #f9e5c4;
+  --color-warning-200: #f0ce8e;
+  --color-warning-500: #d2871c;
+  --color-warning-600: #ab6d12;
+  --color-warning-700: #86560e;
 
-  --color-danger-50: #fef1f1;
-  --color-danger-100: #fcdada;
-  --color-danger-200: #f8bcbc;
-  --color-danger-400: #ec7373;
-  --color-danger-500: #e23f3f;
-  --color-danger-600: #c22a2a;
-  --color-danger-700: #9e2020;
+  --color-danger-50: #f9edec;
+  --color-danger-100: #f1d7d5;
+  --color-danger-200: #e5b8b4;
+  --color-danger-400: #c97b76;
+  --color-danger-500: #b75f59;
+  --color-danger-600: #9a453f;
+  --color-danger-700: #7c332e;
 
-  /* Neutral override — a cool slate with a faint indigo undertone (hue
-     ~226°) instead of Tailwind's pure gray, so it sits naturally between the
-     teal brand and violet accent rather than reading as an unrelated
-     default. Every `neutral-*` utility across the app inherits this. */
-  --color-neutral-50: #f6f7fa;
-  --color-neutral-100: #edeff5;
-  --color-neutral-200: #e1e4ed;
-  --color-neutral-300: #c7ccda;
-  --color-neutral-400: #9aa1b6;
-  --color-neutral-500: #6e7690;
-  --color-neutral-600: #525a72;
-  --color-neutral-700: #3b4257;
-  --color-neutral-800: #262b3b;
-  --color-neutral-900: #171a26;
-  --color-neutral-950: #0d0f17;
+  /* Neutral — warm off-white ground (#FBF9F4 = neutral-50) trending to a
+     cool teal-grey through the mids and into Deep Text Teal (#0D2E2C =
+     neutral-900). neutral-600 is the official Soft Text Teal (#4E625F).
+     Every `neutral-*` utility across the app inherits this. */
+  --color-neutral-50: #fbf9f4;
+  --color-neutral-100: #f2f1ea;
+  --color-neutral-200: #e4e3dc;
+  --color-neutral-300: #cbccc6;
+  --color-neutral-400: #9ba5a2;
+  --color-neutral-500: #6e7b78;
+  --color-neutral-600: #4e625f;
+  --color-neutral-700: #3b4b48;
+  --color-neutral-800: #26332f;
+  --color-neutral-900: #0d2e2c;
+  --color-neutral-950: #08201e;
 
-  /* Elevation — soft/diffused rather than flat, plus a brand-tinted glow
+  /* Elevation — soft/diffused rather than flat, plus a teal-tinted glow
      reserved for primary actions and hover states. */
-  --shadow-soft: 0 1px 2px 0 rgb(23 26 38 / 0.05), 0 6px 16px -6px rgb(23 26 38 / 0.1);
-  --shadow-lifted: 0 4px 10px -2px rgb(23 26 38 / 0.1), 0 20px 44px -14px rgb(23 26 38 / 0.2);
-  --shadow-glow: 0 0 0 1px rgb(18 173 132 / 0.18), 0 10px 28px -8px rgb(18 173 132 / 0.45);
+  --shadow-soft: 0 1px 2px 0 rgb(13 46 44 / 0.05), 0 6px 16px -6px rgb(13 46 44 / 0.12);
+  --shadow-lifted: 0 4px 10px -2px rgb(13 46 44 / 0.1), 0 20px 44px -14px rgb(13 46 44 / 0.22);
+  --shadow-glow: 0 0 0 1px rgb(27 92 87 / 0.18), 0 10px 28px -8px rgb(27 92 87 / 0.4);
 }
 
 @layer base {
@@ -142,4 +146,64 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient background motion (see components/ui/AmbientBackground.tsx).
+   All of this is decorative and `aria-hidden`; the global
+   prefers-reduced-motion block above freezes every animation to a static
+   frame, which still leaves a soft, premium gradient field.
+   --------------------------------------------------------------------------- */
+@keyframes fy-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(var(--fy-dx, 4%), var(--fy-dy, -3%), 0) scale(1.12);
+  }
+}
+
+@keyframes fy-rise {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--fy-o, 0.5);
+  }
+  85% {
+    opacity: var(--fy-o, 0.5);
+  }
+  100% {
+    transform: translateY(-115vh) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes fy-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fy-drift {
+  animation: fy-drift var(--fy-dur, 34s) ease-in-out infinite;
+  animation-delay: var(--fy-delay, 0s);
+  will-change: transform;
+}
+
+.fy-rise {
+  animation: fy-rise var(--fy-dur, 26s) linear infinite;
+  animation-delay: var(--fy-delay, 0s);
+  will-change: transform, opacity;
+}
+
+.fy-fade-in {
+  animation: fy-fade-in 0.18s ease-out both;
 }

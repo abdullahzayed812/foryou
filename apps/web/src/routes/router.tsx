@@ -9,6 +9,8 @@ import { RegisterCustomerPage } from "@/features/auth/pages/RegisterCustomerPage
 import { RegisterSellerPage } from "@/features/auth/pages/RegisterSellerPage";
 import { RegisterMerchantPage } from "@/features/auth/pages/RegisterMerchantPage";
 import { VerifyOtpPage } from "@/features/auth/pages/VerifyOtpPage";
+import { ForgotPasswordPage } from "@/features/auth/pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
 import { DashboardPage } from "@/features/auth/pages/DashboardPage";
 import { BrowsePage } from "@/features/catalog/pages/BrowsePage";
 import { ProductDetailPage } from "@/features/catalog/pages/ProductDetailPage";
@@ -52,6 +54,8 @@ import { AdminNewsPage } from "@/features/admin/pages/AdminNewsPage";
 import { AdminReviewsPage } from "@/features/admin/pages/AdminReviewsPage";
 import { LandingPage } from "@/features/marketing/pages/LandingPage";
 import { ProfilePage } from "@/features/auth/pages/ProfilePage";
+import { SettingsPage } from "@/features/settings/pages/SettingsPage";
+import { NotificationSettingsPage } from "@/features/settings/pages/NotificationSettingsPage";
 
 export const router = createBrowserRouter([
   // Public marketing page — full-bleed, so it sits outside AuthLayout's
@@ -66,6 +70,8 @@ export const router = createBrowserRouter([
       { path: "/register/merchant", element: <RegisterMerchantPage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/verify-otp", element: <VerifyOtpPage /> },
+      { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/reset-password", element: <ResetPasswordPage /> },
     ],
   },
   {
@@ -78,6 +84,8 @@ export const router = createBrowserRouter([
           { path: "/products", element: <BrowsePage /> },
           { path: "/products/:id", element: <ProductDetailPage /> },
           { path: "/profile", element: <ProfilePage /> },
+          { path: "/settings", element: <SettingsPage /> },
+          { path: "/settings/notifications", element: <NotificationSettingsPage /> },
           { path: "/notifications", element: <NotificationsPage /> },
           { path: "/news", element: <NewsListPage /> },
           { path: "/news/:id", element: <NewsDetailPage /> },

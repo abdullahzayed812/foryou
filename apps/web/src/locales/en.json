@@ -12,7 +12,8 @@
     "no": "No",
     "remove": "Remove",
     "selectOne": "Select one",
-    "close": "Close"
+    "close": "Close",
+    "retry": "Try again"
   },
   "roles": {
     "customer": "Customer",
@@ -102,6 +103,27 @@
       "resendSuccess": "A new code has been sent if needed.",
       "changeEmail": "Wrong email?"
     },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your account email and we'll send you a link to set a new password.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "backToLogin": "Back to sign in",
+      "sentTitle": "Check your inbox",
+      "sentBody": "If an account exists for {{email}}, a password reset link is on its way. The link expires in 30 minutes."
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "mismatch": "The two passwords don't match.",
+      "submit": "Update password",
+      "requestNew": "Request a new reset link",
+      "doneTitle": "Password updated",
+      "doneBody": "Your password has been changed and every other session was signed out. You can now sign in with your new password.",
+      "goToLogin": "Go to sign in"
+    },
     "errors": {
       "VALIDATION_FAILED": "Please check the highlighted fields.",
       "INVALID_CREDENTIALS": "Incorrect email or password.",
@@ -110,6 +132,7 @@
       "CONFLICT": "An account with this email already exists.",
       "OTP_INVALID": "That code isn't right — please try again.",
       "OTP_EXPIRED": "That code has expired — request a new one.",
+      "TOKEN_INVALID": "This link is invalid or has expired — request a new one.",
       "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
       "UNAUTHENTICATED": "Please sign in to continue.",
       "INTERNAL_ERROR": "Something went wrong. Please try again."
@@ -125,6 +148,11 @@
     "newRequest": "New import request",
     "openRequests": "{{count}} open import request(s) match your countries",
     "recentOrders": "Recent orders",
+    "sections": {
+      "greeting": "Welcome back",
+      "overview": "Overview",
+      "quickActions": "Quick actions"
+    },
     "stats": {
       "activeOrders": "Active orders",
       "totalOrders": "Total orders",
@@ -176,6 +204,61 @@
     "catalog": "Catalog",
     "profile": "Profile",
     "reviewsQueue": "Reviews"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and how FOR YOU reaches you.",
+    "back": "← Settings",
+    "signOut": "Sign out",
+    "sections": {
+      "profile": {
+        "title": "Profile & account",
+        "desc": "Your personal details, addresses, password and verification."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Choose which updates you want to receive."
+      }
+    },
+    "language": {
+      "title": "Language",
+      "desc": "Switch between Arabic and English."
+    },
+    "notifications": {
+      "title": "Notification settings",
+      "subtitle": "Turn off a category to stop receiving those in-app notifications.",
+      "alwaysOn": "Account and security alerts are always sent and can't be turned off.",
+      "categories": {
+        "orders": {
+          "title": "Orders",
+          "desc": "Deposits, delivery, completion and cancellations."
+        },
+        "offers": {
+          "title": "Offers & requests",
+          "desc": "New offers on your requests, offer results and matched requests."
+        },
+        "disputes": {
+          "title": "Disputes",
+          "desc": "When a dispute is opened or resolved."
+        },
+        "reviews": {
+          "title": "Reviews",
+          "desc": "When someone leaves you a review."
+        },
+        "verification": {
+          "title": "Verification",
+          "desc": "Approval or rejection of your identity and business verification."
+        },
+        "wallet": {
+          "title": "Wallet & withdrawals",
+          "desc": "Released funds and withdrawal outcomes."
+        },
+        "products": {
+          "title": "Products & WANTED",
+          "desc": "Listing status, restocks and WANTED items arriving on EXPRESS."
+        }
+      }
+    }
   },
   "profile": {
     "title": "My profile",
@@ -349,6 +432,7 @@
       "sortLowestPrice": "Price: low to high",
       "sortHighestPrice": "Price: high to low",
       "searchSubmit": "Search",
+      "clearFilters": "Clear filters",
       "empty": "No products found",
       "emptyHint": "Try a different search or filter."
     },
@@ -364,6 +448,45 @@
       "warranty": "Warranty",
       "category": "Category",
       "brand": "Brand"
+    }
+  },
+  "wanted": {
+    "badge": "WANTED",
+    "importingBadge": "Importing",
+    "hint": "This product isn't in stock yet — the seller is testing demand. React to show your interest.",
+    "importingHint": "The seller is importing this product now. You'll be notified the moment it lands on FOR YOU EXPRESS.",
+    "likes": "Likes",
+    "notifyRequests": "Notify requests",
+    "like": "Like",
+    "liked": "Liked",
+    "notifyMe": "Notify me",
+    "notifying": "We'll notify you",
+    "signInHint": "Sign in to react to this product.",
+    "lifecycle": {
+      "wanted": "WANTED",
+      "importing": "Importing",
+      "express": "EXPRESS"
+    },
+    "cycleStatus": {
+      "active": "Active",
+      "importing": "Importing",
+      "completed": "Completed"
+    },
+    "owner": {
+      "title": "FOR YOU WANTED",
+      "hint": "Test demand, then import. Every completed cycle is kept for comparison: interest → import decision → actual sales.",
+      "startAsWanted": "List as WANTED (test demand first)",
+      "start": "Start a WANTED cycle",
+      "startImporting": "Start importing",
+      "completeImport": "Complete import & add stock",
+      "importedQuantity": "Imported quantity",
+      "cycle": "Cycle",
+      "imported": "Imported",
+      "sold": "Sold",
+      "remaining": "Remaining",
+      "conversion": "Notify → purchase",
+      "status": "Status",
+      "openCycleNote": "An open cycle is still collecting interest — its sales figures fill in after it completes."
     }
   },
   "wishlist": {

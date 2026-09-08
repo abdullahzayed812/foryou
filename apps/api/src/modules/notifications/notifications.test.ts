@@ -127,4 +127,50 @@ describe("notifications", () => {
       .set("Authorization", `Bearer ${winningToken}`);
     expect(winningList.body.some((n: { type: string }) => n.type === "offer_selected")).toBe(true);
   });
+
+  it("preferences default to all-on, round-trip through PATCH, and mute a category", async () => {
+    const customer = await createVerifiedUser(uniqueEmail("notif-prefs"));
+    const admin = await createVerifiedUser(uniqueEmail("notif-prefs-admin"), "admin");
+    const token = await loginAs(app, customer.email);
+    const adminToken = await loginAs(app, admin.email);
+
+    const defaults = await request(app)
+      .get("/api/v1/notifications/preferences")
+      .set("Authorization", `Bearer ${token}`);
+    expect(defaults.status).toBe(200);
+    expect(defaults.body).toMatchObject({ verification: true, orders: true, products: true });
+
+    const patchRes = await request(app)
+      .patch("/api/v1/notifications/preferences")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ verification: false });
+    expect(patchRes.status).toBe(200);
+    expect(patchRes.body.verification).toBe(false);
+    expect(patchRes.body.orders).toBe(true); // untouched categories stay on
+
+    // An empty patch is a validation error (must change at least one category).
+    const badRes = await request(app)
+      .patch("/api/v1/notifications/preferences")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+    expect(badRes.status).toBe(422);
+
+    // verification_approved now falls in a muted category → not delivered.
+    const idAsset = await createReadyMediaAsset(customer.id);
+    const selfieAsset = await createReadyMediaAsset(customer.id);
+    const submitRes = await request(app)
+      .post("/api/v1/verification/identity")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nationalIdMediaAssetId: idAsset, selfieMediaAssetId: selfieAsset });
+    await request(app)
+      .post(`/api/v1/admin/verification/${submitRes.body.id}/approve`)
+      .set("Authorization", `Bearer ${adminToken}`);
+    await new Promise((r) => setTimeout(r, 150));
+
+    const list = await request(app)
+      .get("/api/v1/notifications")
+      .set("Authorization", `Bearer ${token}`);
+    expect(list.status).toBe(200);
+    expect(list.body.some((n: { type: string }) => n.type === "verification_approved")).toBe(false);
+  });
 });

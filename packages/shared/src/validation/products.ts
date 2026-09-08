@@ -21,6 +21,10 @@ export const createProductSchema = z
     availableQuantity: z.number().int().min(0),
     warrantyAvailable: z.boolean().default(false),
     isComingSoon: z.boolean().default(false),
+    // List the product straight into a WANTED cycle (demand testing) instead
+    // of publishing it as buyable EXPRESS stock. Independent of quantity —
+    // any quantity given is ignored until the seller completes an import.
+    startAsWanted: z.boolean().default(false),
     videoMediaAssetId: z.uuid().optional(),
     tags: z.array(z.string().min(1).max(40)).max(20).default([]),
     images: z.array(productImageSchema).min(1).max(8),

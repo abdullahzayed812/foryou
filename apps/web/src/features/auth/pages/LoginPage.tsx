@@ -45,8 +45,8 @@ export function LoginPage() {
 
   return (
     <Card>
-      <h1 className="text-xl font-bold text-neutral-900">{t("auth.login.title")}</h1>
-      <p className="mt-1 text-sm text-neutral-600">{t("auth.login.subtitle")}</p>
+      <h1 className="font-display text-xl font-bold text-neutral-900">{t("auth.login.title")}</h1>
+      <p className="mt-1 text-sm leading-relaxed text-neutral-600">{t("auth.login.subtitle")}</p>
 
       <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
         <ErrorBanner error={login.error} />
